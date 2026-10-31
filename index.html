@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PotencIA | Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio</title>
+  <meta name="description" content="Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio. Trilhas por assinatura com Claude, GitHub, Remotion e ElevenLabs, da instalação ao post que vende.">
+  <meta name="theme-color" content="#0B0B0A">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Open Graph / compartilhamento.
+       Depois de publicar, troque os caminhos de og:image e og:url pelo endereço completo do site
+       (ex.: https://seudominio.com.br/assets/og-image.jpg). WhatsApp e LinkedIn exigem endereço completo. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="PotencIA">
+  <meta property="og:title" content="PotencIA: conteúdo de agência, feito por você">
+  <meta property="og:description" content="Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio. Da instalação do Claude ao post que vende. Entre na lista de espera.">
+  <meta property="og:image" content="assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PotencIA: conteúdo de agência, feito por você. Símbolo de um quadrado com um pequeno quadrado dourado elevado, como um expoente.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PotencIA: conteúdo de agência, feito por você">
+  <meta name="twitter:description" content="Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio.">
+  <meta name="twitter:image" content="assets/og-image.jpg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <!-- Fontes. Para trocar a tipografia, troque este link e as variáveis --fonte-titulo e --fonte-texto em style.css. -->
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=chillax@400,500,600&amp;display=swap" rel="stylesheet">
+  <!-- Anton e Pacifico: usadas só nos posts de exemplo "poluídos" (subconjunto mínimo de letras, carregamento sem bloquear). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Pacifico&amp;display=swap&amp;text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%C3%81%C3%82%C3%83%C3%80%C3%87%C3%89%C3%8A%C3%8D%C3%93%C3%94%C3%95%C3%9A%C3%A1%C3%A2%C3%A3%C3%A0%C3%A7%C3%A9%C3%AA%C3%AD%C3%B3%C3%B4%C3%B5%C3%BA!%3F.%2C%3A%3B%2B-*%25%24%26()%2F%E2%80%A2%20">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Marca o documento: com JavaScript, as animações assumem o controle;
+       sem JavaScript (ou com movimento reduzido), tudo aparece no estado final. -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        d.classList.add('movimento');
+        // Rede de segurança: se as bibliotecas de animação não carregarem, mostra tudo.
+        setTimeout(function () { if (!window.gsap) d.classList.remove('movimento'); }, 4000);
+      }
+    })();
+  </script>
+
+  <!-- Dados estruturados: organização e curso -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "#potencia",
+        "name": "PotencIA",
+        "description": "Plataforma de cursos e trilhas por assinatura que ensina pequenos e médios empresários a criar vídeos, artes e carrosséis com inteligência artificial, da criação à venda.",
+        "areaServed": { "@type": "Country", "name": "Brasil" },
+        "knowsAbout": ["Inteligência artificial", "Criação de conteúdo", "Vídeo", "Design de carrosséis", "Marketing para pequenos negócios"]
+      },
+      {
+        "@type": "Course",
+        "@id": "#curso",
+        "name": "PotencIA: vídeos, artes e carrosséis com IA para o seu negócio",
+        "description": "Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio. Sete trilhas, da instalação do Claude ao post publicado e gerando vendas, com Claude, GitHub, Remotion e ElevenLabs.",
+        "provider": { "@id": "#potencia" },
+        "inLanguage": "pt-BR",
+        "educationalLevel": "Iniciante",
+        "teaches": ["Instalar e usar o Claude", "Criar conta e guardar projetos no GitHub", "Vídeos em motion com Remotion", "Edição de vídeos gravados no celular", "Narração com ElevenLabs", "Artes e carrosséis para redes sociais", "Publicação e leitura de resultados"],
+        "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "Online", "inLanguage": "pt-BR" },
+        "hasPart": [
+          { "@type": "Course", "name": "Trilha 0: Primeiros passos", "description": "Instalando o Claude e criando a conta no GitHub, sem medo de tecnologia." },
+          { "@type": "Course", "name": "Trilha 1: Estratégia de conteúdo", "description": "O que postar, para quem e com qual objetivo; roteiros com Claude." },
+          { "@type": "Course", "name": "Trilha 2: Vídeos em motion", "description": "Animações profissionais com Remotion e Claude." },
+          { "@type": "Course", "name": "Trilha 3: Edição de takes reais", "description": "Transformando gravações do celular em vídeos de qualidade." },
+          { "@type": "Course", "name": "Trilha 4: Voz e narração", "description": "Locuções naturais com ElevenLabs." },
+          { "@type": "Course", "name": "Trilha 5: Artes e carrosséis que vendem", "description": "Design limpo, hierarquia e identidade." },
+          { "@type": "Course", "name": "Trilha 6: Da postagem à venda", "description": "Chamadas para ação, publicação e leitura de resultados." }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <!-- ======================================================================
+       Biblioteca SVG dos posts de exemplo.
+       Os degradês, brilhos e sombras daqui existem só para ilustrar o post
+       "poluído" que a IA entrega sem método. O design da página não usa nenhum.
+       ====================================================================== -->
+  <svg class="biblioteca-svg" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="g-arco" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#ff1744"/><stop offset=".2" stop-color="#ff9100"/><stop offset=".4" stop-color="#ffea00"/>
+        <stop offset=".6" stop-color="#00e676"/><stop offset=".8" stop-color="#2979ff"/><stop offset="1" stop-color="#d500f9"/>
+      </linearGradient>
+      <linearGradient id="g-neon" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ff00a8"/><stop offset=".5" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffe600"/>
+      </linearGradient>
+      <linearGradient id="g-neon2" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="#00e5ff"/><stop offset=".5" stop-color="#7c4dff"/><stop offset="1" stop-color="#ff00c8"/>
+      </linearGradient>
+      <linearGradient id="g-cromo" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#8e99a3"/><stop offset=".55" stop-color="#ffffff"/><stop offset="1" stop-color="#4d565e"/>
+      </linearGradient>
+      <linearGradient id="g-ouro-brega" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff59d"/><stop offset=".45" stop-color="#e0a100"/><stop offset=".55" stop-color="#fff3b0"/><stop offset="1" stop-color="#9c6200"/>
+      </linearGradient>
+      <filter id="f-brilho" x="-20%" y="-30%" width="140%" height="160%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="borrado"/>
+        <feMerge><feMergeNode in="borrado"/><feMergeNode in="borrado"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="f-sombra" x="-20%" y="-30%" width="150%" height="170%">
+        <feDropShadow dx="9" dy="11" stdDeviation="3" flood-color="#000" flood-opacity=".9"/>
+      </filter>
+      <filter id="f-saturar"><feColorMatrix type="saturate" values="2.4"/></filter>
+      <symbol id="s-estouro" viewBox="0 0 200 200">
+        <polygon points="100,0 127.6,33.5 170.7,29.3 166.5,72.4 200,100 166.5,127.6 170.7,170.7 127.6,166.5 100,200 72.4,166.5 29.3,170.7 33.5,127.6 0,100 33.5,72.4 29.3,29.3 72.4,33.5"/>
+      </symbol>
+      <symbol id="s-brilho" viewBox="0 0 40 40">
+        <path d="M20 0C22 14 26 18 40 20C26 22 22 26 20 40C18 26 14 22 0 20C14 18 18 14 20 0Z"/>
+      </symbol>
+      <symbol id="s-seta" viewBox="0 0 100 60"><path d="M0 20H60V0L100 30L60 60V40H0Z"/></symbol>
+      <symbol id="s-chama" viewBox="0 0 60 80">
+        <path d="M30 0C34 18 52 26 52 48C52 66 42 80 30 80C18 80 8 66 8 50C8 38 16 30 20 22C22 32 26 36 30 38C28 26 26 12 30 0Z"/>
+      </symbol>
+      <symbol id="s-coracao" viewBox="0 0 60 54">
+        <path d="M30 54C10 38 0 28 0 16C0 7 7 0 16 0C22 0 27 3 30 8C33 3 38 0 44 0C53 0 60 7 60 16C60 28 50 38 30 54Z"/>
+      </symbol>
+      <pattern id="p-listras" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+        <rect width="56" height="56" fill="#ffea00"/><rect width="28" height="56" fill="#ff1744"/>
+      </pattern>
+      <pattern id="p-bolinhas" width="70" height="70" patternUnits="userSpaceOnUse">
+        <circle cx="18" cy="18" r="10" fill="#fff"/><circle cx="53" cy="53" r="10" fill="#fff"/>
+      </pattern>
+      <pattern id="p-coracoes" width="120" height="110" patternUnits="userSpaceOnUse">
+        <use href="#s-coracao" x="10" y="10" width="40" height="36" fill="#fff"/>
+        <use href="#s-coracao" x="70" y="62" width="40" height="36" fill="#fff"/>
+      </pattern>
+    </defs>
+  </svg>
+
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- ======================================================================
+       Cabeçalho: marca, links e a ação principal. Some ao rolar para baixo
+       e volta ao rolar para cima; assume o chão da seção que está embaixo.
+       ====================================================================== -->
+  <header class="cabecalho" data-cabecalho>
+    <a class="marca" href="#topo" aria-label="PotencIA, voltar ao início">
+      <!-- Símbolo provisório: base + expoente (x²). Para trocar, substitua este <svg>. -->
+      <svg class="marca__simbolo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect class="marca__base" x="0" y="10" width="22" height="22"/>
+        <rect class="marca__expoente" x="24" y="0" width="8" height="8"/>
+      </svg>
+      <span class="marca__nome">PotencIA</span>
+    </a>
+    <nav class="cabecalho__nav" aria-label="Principal">
+      <a class="link" href="#como-funciona">Como funciona</a>
+      <a class="link" href="#trilhas">Trilhas</a>
+      <a class="link" href="#planos">Planos</a>
+      <a class="link" href="#equipe">Equipe</a>
+    </nav>
+    <a class="botao botao--pequeno cabecalho__acao" href="#lista">Entrar na lista de espera</a>
+    <button class="cabecalho__menu" type="button" aria-expanded="false" aria-controls="menu-movel" data-menu-abrir>Menu</button>
+  </header>
+
+  <!-- Menu do celular: folha de tela cheia -->
+  <div class="menu-movel" id="menu-movel" data-menu hidden>
+    <div class="menu-movel__topo">
+      <span class="marca__nome">PotencIA</span>
+      <button class="cabecalho__menu" type="button" data-menu-fechar>Fechar</button>
+    </div>
+    <nav class="menu-movel__nav" aria-label="Menu">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#trilhas">Trilhas</a>
+      <a href="#ferramentas">Ferramentas</a>
+      <a href="#planos">Planos</a>
+      <a href="#equipe">Equipe</a>
+      <a href="#hackathon">No hackathon</a>
+    </nav>
+    <a class="botao" href="#lista">Entrar na lista de espera</a>
+  </div>
+
+  <main id="conteudo">
+
+    <!-- ====================================================================
+         1. ABERTURA
+         O símbolo da marca em escala gigante: a base guarda fotos de pequenos
+         negócios em troca lenta; o expoente dourado sobe ao carregar.
+         ==================================================================== -->
+    <section class="hero secao" id="topo" data-chao="preto" aria-labelledby="hero-titulo">
+      <h1 class="hero__titulo" id="hero-titulo">
+        <span class="linha"><span class="linha__in"><span class="troca" data-troca="Vídeo,Carrossel,Post"><span class="troca__palavra">Conteúdo</span></span> de agência.</span></span>
+        <span class="linha"><span class="linha__in">Feito por você.</span></span>
+      </h1>
+
+      <div class="hero__rodape">
+        <p class="hero__apoio" data-entrada>Aprenda a criar vídeos, artes e carrosséis com IA para o seu negócio. Da instalação do Claude ao post que vende.</p>
+        <div class="hero__acoes" data-entrada>
+          <a class="botao" href="#lista">Entrar na lista de espera</a>
+          <a class="link link--sublinhado" href="#prova">Ver o antes e depois</a>
+        </div>
+      </div>
+
+      <div class="simbolo-gigante" data-simbolo>
+        <!-- A primeira foto vem no HTML; o main.js acrescenta as outras (data-fotos) depois do carregamento. -->
+        <div class="simbolo-gigante__base" role="img" aria-label="Fotos de pequenos negócios brasileiros: pão francês na vitrine de uma padaria, bolos numa confeitaria e uma barbearia" data-fotos="assets/bolos-vitrine-quadrado.webp,assets/barbearia-quadrado.webp">
+          <img class="is-ativa" src="assets/pao-frances-quadrado.webp" width="1000" height="1000" alt="" fetchpriority="high" decoding="async">
+        </div>
+        <div class="simbolo-gigante__expoente" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         2. O PROBLEMA
+         Uma frase com miniaturas no meio das palavras e um feed de posts
+         poluídos que passa de lado enquanto a página rola.
+         ==================================================================== -->
+    <section class="problema secao" id="problema" data-chao="papel" aria-labelledby="problema-titulo">
+      <h2 class="sr-only" id="problema-titulo">O problema</h2>
+      <p class="declaracao" data-declaracao>
+        Você pede um post à IA e recebe cinco <span class="nobr">fontes<span class="miniatura" aria-hidden="true"><svg viewBox="0 0 130 90"><rect width="130" height="90" fill="#141414"/><text x="8" y="66" font-family="Anton, Impact, sans-serif" font-size="62" fill="#ffea00">A</text><text x="42" y="68" font-family="Pacifico, cursive" font-size="50" fill="#ff4fa3">a</text><text x="84" y="66" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="60" fill="#00e5ff">A</text></svg></span>,</span> degradê <span class="nobr">neon<span class="miniatura" aria-hidden="true"><svg viewBox="0 0 130 90"><rect width="130" height="90" fill="url(#g-neon2)"/><use href="#s-brilho" x="86" y="12" width="28" height="28" fill="#fff"/></svg></span>,</span> sombra em <span class="nobr">tudo<span class="miniatura" aria-hidden="true"><svg viewBox="0 0 130 90"><rect width="130" height="90" fill="#fff59d"/><rect x="34" y="26" width="70" height="48" fill="#000"/><rect x="24" y="14" width="70" height="48" fill="#ff1744"/></svg></span></span> e um preço <span class="nobr">escondido<span class="miniatura miniatura--extra" aria-hidden="true"><svg viewBox="0 0 130 90"><rect width="130" height="90" fill="url(#p-listras)"/><use href="#s-brilho" x="10" y="8" width="34" height="34" fill="#fff"/><use href="#s-brilho" x="84" y="44" width="38" height="38" fill="#00e5ff"/><text x="52" y="80" font-family="Arial, sans-serif" font-size="13" fill="#000">R$ 6,90</text></svg></span>.</span> <span class="nobr">O cliente</span> passa direto.
+      </p>
+
+      <div class="feed" data-feed>
+        <div class="feed__trilho" data-feed-trilho>
+
+          <!-- Post poluído: pizzaria -->
+          <figure class="feed__post">
+            <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de pizzaria: foto esticada e saturada, título com degradê arco-íris, selo de promoção, chamas desenhadas e três chamadas competindo">
+              <rect width="1080" height="1350" fill="#120000"/>
+              <image data-href="assets/pizza.webp" x="0" y="250" width="1080" height="760" preserveAspectRatio="none" filter="url(#f-saturar)"/>
+              <rect width="1080" height="250" fill="url(#g-neon)"/>
+              <text x="540" y="186" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="150" fill="url(#g-arco)" stroke="#000" stroke-width="9" paint-order="stroke" filter="url(#f-sombra)">SUPER PROMOÇÃO</text>
+              <g transform="translate(840 420) rotate(14)">
+                <use href="#s-estouro" x="-170" y="-170" width="340" height="340" fill="#ffea00" filter="url(#f-sombra)"/>
+                <text y="-10" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="92" fill="#e00000">2 POR</text>
+                <text y="80" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="92" fill="#e00000">1*</text>
+              </g>
+              <use href="#s-chama" x="40" y="860" width="130" height="170" fill="#ff6d00"/>
+              <use href="#s-chama" x="160" y="910" width="96" height="125" fill="#ffab00"/>
+              <use href="#s-chama" x="900" y="880" width="120" height="155" fill="#ff3d00"/>
+              <rect y="1010" width="1080" height="340" fill="#000"/>
+              <text x="540" y="1112" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="62" fill="#00e676" stroke="#003300" stroke-width="5" paint-order="stroke">PEÇA JÁ PELO ZAP!!!</text>
+              <text x="540" y="1212" text-anchor="middle" font-family="Pacifico, cursive" font-size="70" fill="#fff" filter="url(#f-brilho)">Pizzaria do Bairro</text>
+              <text x="540" y="1292" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="36" fill="#ffea00">link na bio • chama no direct • delivery</text>
+              <text x="1050" y="1336" text-anchor="end" font-family="Arial, sans-serif" font-size="18" fill="#9a9a9a">*válido de seg. a qui., exceto feriados, consulte condições</text>
+              <use href="#s-brilho" x="70" y="300" width="60" height="60" fill="#fff"/>
+              <use href="#s-brilho" x="600" y="760" width="44" height="44" fill="#ffea00"/>
+            </svg>
+          </figure>
+
+          <!-- Post poluído: lanchonete -->
+          <figure class="feed__post">
+            <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de lanchonete: fundo em degradê neon com bolinhas, foto torta com moldura verde brilhante e três fontes diferentes">
+              <rect width="1080" height="1350" fill="url(#g-neon2)"/>
+              <rect width="1080" height="1350" fill="url(#p-bolinhas)" opacity=".22"/>
+              <g transform="rotate(4 540 720)">
+                <rect x="200" y="330" width="680" height="770" fill="#39ff14" filter="url(#f-brilho)"/>
+                <image data-href="assets/coxinha.webp" x="222" y="352" width="636" height="726" preserveAspectRatio="xMidYMid slice"/>
+              </g>
+              <text x="540" y="150" text-anchor="middle" font-family="Pacifico, cursive" font-size="92" fill="#ffea00" stroke="#c51162" stroke-width="6" paint-order="stroke">A melhor coxinha</text>
+              <text x="540" y="272" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="124" fill="#fff" stroke="#000" stroke-width="8" paint-order="stroke" filter="url(#f-sombra)">DA CIDADE!!!</text>
+              <g transform="translate(860 1080) rotate(-12)">
+                <circle r="112" fill="#ff1744" filter="url(#f-sombra)"/>
+                <text y="-14" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="36" fill="#fff">SÓ</text>
+                <text y="44" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="58" fill="#ffea00">R$ 6,90</text>
+              </g>
+              <text x="540" y="1236" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="54" fill="#fff" filter="url(#f-brilho)">Lanches Sabor Real</text>
+              <text x="540" y="1310" text-anchor="middle" font-family="'Comic Sans MS', 'Arial Black', sans-serif" font-size="38" fill="#ffea00">ENCOMENDE JÁ • ACEITAMOS PIX</text>
+              <use href="#s-brilho" x="90" y="1000" width="70" height="70" fill="#fff"/>
+              <use href="#s-brilho" x="930" y="340" width="56" height="56" fill="#ffea00"/>
+            </svg>
+          </figure>
+
+          <!-- Post poluído: açaiteria -->
+          <figure class="feed__post">
+            <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de açaiteria: título cromado em 3D, foto recortada em coração com contorno brilhante e preços escondidos em letra pequena">
+              <defs><clipPath id="c-coracao-acai"><path transform="translate(150 300) scale(13)" d="M30 54C10 38 0 28 0 16C0 7 7 0 16 0C22 0 27 3 30 8C33 3 38 0 44 0C53 0 60 7 60 16C60 28 50 38 30 54Z"/></clipPath></defs>
+              <rect width="1080" height="1350" fill="url(#g-neon)"/>
+              <path transform="translate(150 300) scale(13)" d="M30 54C10 38 0 28 0 16C0 7 7 0 16 0C22 0 27 3 30 8C33 3 38 0 44 0C53 0 60 7 60 16C60 28 50 38 30 54Z" fill="#fff" stroke="#fff" stroke-width="2.4" filter="url(#f-brilho)"/>
+              <image data-href="assets/acai.webp" x="150" y="300" width="780" height="702" clip-path="url(#c-coracao-acai)" preserveAspectRatio="xMidYMid slice"/>
+              <g font-family="Anton, Impact, sans-serif" font-size="142" text-anchor="middle">
+                <text x="556" y="226" fill="#3a0066">AÇAÍ TURBINADO</text>
+                <text x="550" y="220" fill="#3a0066">AÇAÍ TURBINADO</text>
+                <text x="544" y="214" fill="#5b0099">AÇAÍ TURBINADO</text>
+                <text x="540" y="210" fill="url(#g-cromo)" stroke="#000" stroke-width="4" paint-order="stroke">AÇAÍ TURBINADO</text>
+              </g>
+              <text x="540" y="1148" text-anchor="middle" font-family="Pacifico, cursive" font-size="82" fill="#fff" stroke="#6a1b9a" stroke-width="5" paint-order="stroke">Monte do seu jeito!!!</text>
+              <text x="540" y="1236" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#4a0072">300 ml R$ 14 • 500 ml R$ 19 • 700 ml R$ 24</text>
+              <text x="540" y="1306" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="38" fill="#ffea00" stroke="#4a0072" stroke-width="4" paint-order="stroke">DELIVERY • RETIRADA • LINK NA BIO</text>
+              <use href="#s-brilho" x="70" y="330" width="64" height="64" fill="#fff"/>
+              <use href="#s-brilho" x="930" y="900" width="70" height="70" fill="#fff"/>
+            </svg>
+          </figure>
+
+          <!-- Post poluído: confeitaria (com o dourado brilhante que a PotencIA evita) -->
+          <figure class="feed__post">
+            <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de confeitaria: fundo rosa com corações, moldura dourada brilhante, título em dourado metálico e lista de produtos sem fim">
+              <defs><clipPath id="c-oval-doce"><ellipse cx="540" cy="710" rx="368" ry="430"/></clipPath></defs>
+              <rect width="1080" height="1350" fill="#ff4fa3"/>
+              <rect width="1080" height="1350" fill="url(#p-coracoes)" opacity=".32"/>
+              <ellipse cx="540" cy="710" rx="400" ry="462" fill="url(#g-ouro-brega)" filter="url(#f-sombra)"/>
+              <image data-href="assets/brigadeiros.webp" x="172" y="280" width="736" height="860" clip-path="url(#c-oval-doce)" preserveAspectRatio="xMidYMid slice"/>
+              <text x="540" y="164" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="108" fill="url(#g-ouro-brega)" stroke="#5d2a00" stroke-width="4" paint-order="stroke" filter="url(#f-brilho)">Encomendas</text>
+              <text x="540" y="252" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="80" fill="#fff" stroke="#c2185b" stroke-width="6" paint-order="stroke">ABERTAS!!!</text>
+              <text x="540" y="1232" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="32" fill="#fff">BRIGADEIRO • BEIJINHO • CASADINHO • BOLOS</text>
+              <text x="540" y="1306" text-anchor="middle" font-family="Pacifico, cursive" font-size="58" fill="#ffea00" stroke="#880e4f" stroke-width="4" paint-order="stroke">Doce Sabor</text>
+              <use href="#s-seta" x="60" y="1150" width="120" height="72" fill="#ffea00"/>
+              <use href="#s-brilho" x="900" y="300" width="70" height="70" fill="#fff59d"/>
+            </svg>
+          </figure>
+
+          <!-- Post poluído: padaria (é este que o comparador conserta a seguir) -->
+          <figure class="feed__post">
+            <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de padaria: degradê neon, foto torta e esticada, selo de urgência e o horário do pão escondido no canto">
+              <rect width="1080" height="1350" fill="url(#g-neon)"/>
+              <rect width="1080" height="1350" fill="url(#p-listras)" opacity=".16"/>
+              <g transform="rotate(-5 540 700)">
+                <rect x="130" y="380" width="820" height="560" fill="#ffea00" filter="url(#f-brilho)"/>
+                <image data-href="assets/pao-frances.webp" x="150" y="400" width="780" height="520" preserveAspectRatio="none"/>
+              </g>
+              <text x="540" y="230" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="128" fill="url(#g-arco)" stroke="#000" stroke-width="8" paint-order="stroke" filter="url(#f-sombra)">PÃO QUENTINHO!!!</text>
+              <g transform="translate(830 960) rotate(12)">
+                <use href="#s-estouro" x="-150" y="-150" width="300" height="300" fill="#ff1744" filter="url(#f-sombra)"/>
+                <text y="-4" text-anchor="middle" font-family="Pacifico, cursive" font-size="56" fill="#fff">Só hoje!</text>
+                <text y="56" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="46" fill="#ffea00">IMPERDÍVEL</text>
+              </g>
+              <text x="70" y="1100" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="66" fill="#fff" filter="url(#f-brilho)">Padaria Trigal</text>
+              <text x="70" y="1196" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="46" fill="#00e5ff" stroke="#000" stroke-width="4" paint-order="stroke">PEÇA JÁ!!! CHAMA NO DIRECT</text>
+              <text x="70" y="1282" font-family="Pacifico, cursive" font-size="44" fill="#ffea00">link na bio</text>
+              <use href="#s-seta" x="340" y="1240" width="120" height="70" fill="#00e676"/>
+              <text x="1010" y="1330" text-anchor="end" font-family="Arial, sans-serif" font-size="20" fill="#fff" opacity=".75">às 6h, 12h e 17h</text>
+              <use href="#s-brilho" x="90" y="300" width="56" height="56" fill="#fff"/>
+              <use href="#s-brilho" x="960" y="290" width="44" height="44" fill="#fff"/>
+            </svg>
+          </figure>
+
+        </div>
+      </div>
+      <p class="problema__nota">Posts de exemplo, criados para mostrar erros comuns. Os negócios são fictícios; as fotos são reais, do acervo aberto do Wikimedia Commons.</p>
+    </section>
+
+    <!-- ====================================================================
+         3. A PROVA: antes e depois
+         Comparador deslizante entre o carrossel poluído e o mesmo conteúdo
+         redesenhado. As duas versões são SVG no mesmo tamanho (1080 × 1080).
+         ==================================================================== -->
+    <section class="prova secao" id="prova" data-chao="pedra" aria-labelledby="prova-titulo">
+      <div class="prova__placa" role="tabpanel" id="painel-carrossel" aria-label="Tela do carrossel">
+        <div class="comparador" data-comparador data-ui role="group" aria-label="Comparador antes e depois do carrossel" style="--pos: 50%">
+
+          <!-- Camada de baixo: DEPOIS (redesenhado) -->
+          <div class="comparador__camada comparador__depois">
+            <svg class="slide is-ativo" data-slide="0" viewBox="0 0 1080 1080" role="img" aria-label="Depois, capa: foto do pão francês ocupando o topo, nome da padaria, título em uma fonte só e uma única chamada para encomendar pelo WhatsApp">
+              <rect width="1080" height="1080" fill="#F2EEE7"/>
+              <image data-href="assets/pao-frances.webp" x="0" y="0" width="1080" height="660" preserveAspectRatio="xMidYMid slice"/>
+              <rect x="924" y="48" width="108" height="56" fill="#F2EEE7"/>
+              <text x="978" y="86" text-anchor="middle" font-family="Chillax, sans-serif" font-weight="500" font-size="26" fill="#231A13">1/3</text>
+              <text x="72" y="752" font-family="Chillax, sans-serif" font-weight="500" font-size="30" fill="#2F5233">Padaria Trigal</text>
+              <text x="72" y="852" font-family="Chillax, sans-serif" font-weight="600" font-size="68" letter-spacing="-1.5" fill="#231A13">Pão francês quentinho</text>
+              <text x="72" y="930" font-family="Chillax, sans-serif" font-weight="600" font-size="68" letter-spacing="-1.5" fill="#231A13">às 6h, 12h e 17h.</text>
+              <text x="72" y="1012" font-family="Chillax, sans-serif" font-weight="500" font-size="30" fill="#231A13">Encomende pelo WhatsApp</text>
+              <rect x="72" y="1030" width="354" height="4" fill="#2F5233"/>
+            </svg>
+            <svg class="slide" data-slide="1" viewBox="0 0 1080 1080" role="img" aria-label="Depois, conteúdo: foto dos bolos na vitrine, título curto e três linhas de preço alinhadas">
+              <rect width="1080" height="1080" fill="#F2EEE7"/>
+              <image data-href="assets/bolos-vitrine.webp" x="0" y="0" width="1080" height="600" preserveAspectRatio="xMidYMid slice"/>
+              <rect x="924" y="48" width="108" height="56" fill="#F2EEE7"/>
+              <text x="978" y="86" text-anchor="middle" font-family="Chillax, sans-serif" font-weight="500" font-size="26" fill="#231A13">2/3</text>
+              <text x="72" y="700" font-family="Chillax, sans-serif" font-weight="600" font-size="64" letter-spacing="-1.5" fill="#231A13">Bolo de chocolate,</text>
+              <text x="72" y="776" font-family="Chillax, sans-serif" font-weight="600" font-size="64" letter-spacing="-1.5" fill="#231A13">inteiro ou em fatia.</text>
+              <g font-family="Chillax, sans-serif" font-size="36" fill="#231A13">
+                <text x="72" y="880">Fatia</text><text x="1008" y="880" text-anchor="end" font-weight="600">R$ 9</text>
+                <rect x="72" y="904" width="936" height="2" fill="#D9D2C5"/>
+                <text x="72" y="954">Inteiro</text><text x="1008" y="954" text-anchor="end" font-weight="600">R$ 68</text>
+                <rect x="72" y="978" width="936" height="2" fill="#D9D2C5"/>
+                <text x="72" y="1028">Encomenda</text><text x="1008" y="1028" text-anchor="end" font-weight="600">1 dia antes</text>
+              </g>
+            </svg>
+            <svg class="slide" data-slide="2" viewBox="0 0 1080 1080" role="img" aria-label="Depois, chamada: fundo verde, frase curta com o horário e um único botão para chamar no WhatsApp">
+              <rect width="1080" height="1080" fill="#2F5233"/>
+              <rect x="924" y="48" width="108" height="56" fill="#F2EEE7"/>
+              <text x="978" y="86" text-anchor="middle" font-family="Chillax, sans-serif" font-weight="500" font-size="26" fill="#2F5233">3/3</text>
+              <text x="72" y="400" font-family="Chillax, sans-serif" font-weight="600" font-size="80" letter-spacing="-2" fill="#F2EEE7">Peça até as 10h</text>
+              <text x="72" y="492" font-family="Chillax, sans-serif" font-weight="600" font-size="80" letter-spacing="-2" fill="#F2EEE7">e retire quentinho.</text>
+              <rect x="72" y="588" width="512" height="112" fill="#F2EEE7"/>
+              <text x="112" y="658" font-family="Chillax, sans-serif" font-weight="600" font-size="40" fill="#2F5233">Chamar no WhatsApp</text>
+              <text x="72" y="930" font-family="Chillax, sans-serif" font-size="30" fill="#F2EEE7" opacity=".85">Rua das Flores, 120. Aberto das 6h às 20h.</text>
+              <text x="72" y="1012" font-family="Chillax, sans-serif" font-weight="500" font-size="30" fill="#F2EEE7">Padaria Trigal</text>
+            </svg>
+          </div>
+
+          <!-- Camada de cima: ANTES (poluído), recortada pela posição da linha -->
+          <div class="comparador__camada comparador__antes" data-antes>
+            <svg class="slide is-ativo" data-slide="0" viewBox="0 0 1080 1080" role="img" aria-label="Antes, capa: degradê neon, foto torta e esticada, título arco-íris com contorno, selo de urgência, três chamadas brigando e o horário escondido no canto">
+              <rect width="1080" height="1080" fill="url(#g-neon)"/>
+              <rect width="1080" height="1080" fill="url(#p-listras)" opacity=".16"/>
+              <g transform="rotate(-5 540 560)">
+                <rect x="140" y="300" width="800" height="500" fill="#ffea00" filter="url(#f-brilho)"/>
+                <image data-href="assets/pao-frances.webp" x="160" y="320" width="760" height="460" preserveAspectRatio="none"/>
+              </g>
+              <text x="540" y="196" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="124" fill="url(#g-arco)" stroke="#000" stroke-width="8" paint-order="stroke" filter="url(#f-sombra)">PÃO QUENTINHO!!!</text>
+              <g transform="translate(820 690) rotate(12)">
+                <use href="#s-estouro" x="-150" y="-150" width="300" height="300" fill="#ff1744" filter="url(#f-sombra)"/>
+                <text y="-4" text-anchor="middle" font-family="Pacifico, cursive" font-size="56" fill="#fff">Só hoje!</text>
+                <text y="56" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="46" fill="#ffea00">IMPERDÍVEL</text>
+              </g>
+              <text x="64" y="878" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="64" fill="#fff" filter="url(#f-brilho)">Padaria Trigal</text>
+              <text x="64" y="960" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="44" fill="#00e5ff" stroke="#000" stroke-width="4" paint-order="stroke">PEÇA JÁ!!! CHAMA NO DIRECT</text>
+              <text x="64" y="1034" font-family="Pacifico, cursive" font-size="40" fill="#ffea00">link na bio</text>
+              <use href="#s-seta" x="320" y="996" width="112" height="66" fill="#00e676"/>
+              <text x="1014" y="1052" text-anchor="end" font-family="Arial, sans-serif" font-size="19" fill="#fff" opacity=".75">às 6h, 12h e 17h</text>
+              <use href="#s-brilho" x="70" y="240" width="54" height="54" fill="#fff"/>
+              <use href="#s-brilho" x="964" y="250" width="40" height="40" fill="#fff"/>
+              <use href="#s-brilho" x="520" y="820" width="36" height="36" fill="#ffea00"/>
+            </svg>
+            <svg class="slide" data-slide="1" viewBox="0 0 1080 1080" role="img" aria-label="Antes, conteúdo: fundo listrado, foto espremida num círculo com borda verde brilhante, lista de produtos em três fontes e os preços perdidos">
+              <defs><clipPath id="c-circulo-bolo"><circle cx="300" cy="560" r="230"/></clipPath></defs>
+              <rect width="1080" height="1080" fill="url(#p-listras)"/>
+              <rect width="1080" height="1080" fill="#000" opacity=".45"/>
+              <circle cx="300" cy="560" r="248" fill="#39ff14" filter="url(#f-brilho)"/>
+              <image data-href="assets/bolos-vitrine.webp" x="70" y="330" width="460" height="460" clip-path="url(#c-circulo-bolo)" preserveAspectRatio="none"/>
+              <text x="540" y="170" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="116" fill="url(#g-arco)" stroke="#000" stroke-width="8" paint-order="stroke" filter="url(#f-sombra)">NOSSOS PRODUTOS!!!</text>
+              <g text-anchor="middle">
+                <text x="790" y="340" font-family="Pacifico, cursive" font-size="50" fill="#ffea00">Bolo de chocolate</text>
+                <text x="790" y="410" font-family="Georgia, serif" font-style="italic" font-size="44" fill="#00e5ff">Bolo de cenoura</text>
+                <text x="790" y="474" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="38" fill="#fff">SONHO • ROSCA</text>
+                <text x="790" y="540" font-family="Pacifico, cursive" font-size="44" fill="#ff80ab">Pão de queijo</text>
+                <text x="790" y="604" font-family="Anton, Impact, sans-serif" font-size="46" fill="#ffea00">COXINHA • CAFÉ</text>
+                <text x="790" y="668" font-family="Georgia, serif" font-weight="700" font-size="42" fill="#fff">Tortas e doces</text>
+                <text x="790" y="740" font-family="Pacifico, cursive" font-size="52" fill="#00e676">Kit festa!!!</text>
+              </g>
+              <text x="560" y="822" font-family="Arial, sans-serif" font-size="20" fill="#fff">fatia R$ 9</text>
+              <g transform="translate(150 880) rotate(-10)">
+                <rect x="-110" y="-46" width="220" height="80" fill="#ff1744" filter="url(#f-sombra)"/>
+                <text y="12" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="48" fill="#ffea00">NOVIDADE</text>
+              </g>
+              <rect y="960" width="1080" height="120" fill="#000"/>
+              <text x="540" y="1034" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="30" fill="#ffea00">ACEITAMOS CARTÃO, PIX E VALE • DELIVERY • ENCOMENDAS</text>
+              <text x="1000" y="900" text-anchor="end" font-family="Arial, sans-serif" font-size="18" fill="#ccc">inteiro R$ 68</text>
+              <use href="#s-brilho" x="930" y="196" width="60" height="60" fill="#fff"/>
+              <use href="#s-brilho" x="460" y="300" width="44" height="44" fill="#ffea00"/>
+            </svg>
+            <svg class="slide" data-slide="2" viewBox="0 0 1080 1080" role="img" aria-label="Antes, chamada: fundo preto com moldura neon, cinco chamadas diferentes em cinco fontes, setas para todo lado e o telefone escondido">
+              <rect width="1080" height="1080" fill="#050505"/>
+              <rect x="15" y="15" width="1050" height="1050" fill="none" stroke="url(#g-neon2)" stroke-width="30"/>
+              <text x="540" y="210" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="92" fill="url(#g-arco)" stroke="#fff" stroke-width="3" paint-order="stroke">CLIQUE NO LINK DA BIO!!!</text>
+              <text x="540" y="360" text-anchor="middle" font-family="Pacifico, cursive" font-size="84" fill="#ff00c8" filter="url(#f-brilho)">Chama no direct!!!</text>
+              <text x="540" y="530" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="110" fill="#ffea00" filter="url(#f-sombra)">LIGUE JÁ!!!</text>
+              <text x="540" y="680" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="78" fill="#00e5ff">Siga a página!!!</text>
+              <text x="540" y="820" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="62" fill="#00e676">COMPARTILHE COM OS AMIGOS!!!</text>
+              <use href="#s-seta" x="60" y="430" width="150" height="90" fill="#ff1744"/>
+              <g transform="translate(980 560) rotate(180)"><use href="#s-seta" x="0" y="0" width="150" height="90" fill="#2979ff"/></g>
+              <g transform="translate(470 860) rotate(60)"><use href="#s-seta" x="0" y="0" width="130" height="78" fill="#ffea00"/></g>
+              <text x="540" y="1010" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#888">(11) 90000-0000</text>
+              <use href="#s-brilho" x="590" y="968" width="70" height="70" fill="#fff"/>
+              <use href="#s-brilho" x="90" y="80" width="56" height="56" fill="#fff"/>
+              <use href="#s-brilho" x="930" y="890" width="64" height="64" fill="#ffea00"/>
+            </svg>
+          </div>
+
+          <div class="comparador__alca" aria-hidden="true">
+            <span class="comparador__botao">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+            </span>
+          </div>
+          <span class="comparador__rotulo comparador__rotulo--antes" aria-hidden="true">Antes</span>
+          <span class="comparador__rotulo comparador__rotulo--depois" aria-hidden="true">Depois</span>
+          <input class="comparador__faixa" type="range" min="0" max="100" value="50" step="1" aria-label="Posição da linha: 100 mostra só o antes, 0 mostra só o depois" data-comparador-faixa>
+        </div>
+      </div>
+
+      <div class="prova__texto">
+        <div class="abas" role="tablist" aria-label="Telas do carrossel">
+          <button class="abas__aba" type="button" role="tab" aria-controls="painel-carrossel" aria-selected="true" data-aba="0">Capa</button>
+          <button class="abas__aba" type="button" role="tab" aria-controls="painel-carrossel" aria-selected="false" tabindex="-1" data-aba="1">Conteúdo</button>
+          <button class="abas__aba" type="button" role="tab" aria-controls="painel-carrossel" aria-selected="false" tabindex="-1" data-aba="2">Chamada</button>
+        </div>
+        <div class="prova__meio">
+          <h2 class="prova__titulo" id="prova-titulo">O mesmo post, com método.</h2>
+          <p>Arraste a linha sobre o post. De um lado, o que a IA entrega quando ninguém a orienta. Do outro, o mesmo conteúdo com uma fonte, uma foto bem cortada e uma única chamada.</p>
+          <p class="prova__nota">Padaria Trigal é um exemplo fictício, com fotos reais de padaria.</p>
+        </div>
+        <div class="prova__acoes">
+          <button class="celula" type="button" data-ir="antes">Ver o antes</button>
+          <button class="celula celula--tinta" type="button" data-ir="depois">Ver o depois</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         4. COMO FUNCIONA
+         Acordeão horizontal de painéis em tons do escuro ao claro.
+         No computador, os painéis abrem conforme a rolagem; no celular,
+         empilham e abrem ao entrar na tela. Sem JavaScript, tudo aberto.
+         ==================================================================== -->
+    <section class="jornada secao" id="como-funciona" data-chao="papel" aria-labelledby="jornada-titulo">
+      <div class="jornada__intro">
+        <h2 class="titulo-secao" id="jornada-titulo">Da instalação à venda.</h2>
+        <p class="jornada__texto">A jornada inteira, na ordem em que acontece no seu negócio. Cada etapa termina com algo pronto para usar.</p>
+      </div>
+
+      <ol class="etapas" data-etapas>
+        <li class="etapa is-aberta" style="--tom: #0B0B0A; --tinta: #EDEBE7">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b1" aria-expanded="true" aria-controls="etapa-p1"><span class="etapa__nome">Instalar e configurar</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p1" role="region" aria-labelledby="etapa-b1">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Instalar e configurar</p>
+                <p>Você instala o Claude, cria a conta no GitHub e deixa o computador pronto para trabalhar. Um passo por vez, com a tela na sua frente.</p>
+              </div>
+              <figure class="etapa__foto"><img src="assets/teclado.webp" width="960" height="720" alt="Teclado de notebook visto de perto" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </li>
+        <li class="etapa" style="--tom: #1D1C1A; --tinta: #EDEBE7">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b2" aria-expanded="false" aria-controls="etapa-p2"><span class="etapa__nome">Planejar o conteúdo</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p2" role="region" aria-labelledby="etapa-b2">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Planejar o conteúdo</p>
+                <p>Você define para quem fala, o que posta e por quê. O Claude ajuda a transformar o que você vende em roteiros.</p>
+              </div>
+              <figure class="etapa__foto"><img src="assets/caderno-visconti.webp" width="960" height="720" alt="Página de caderno de anotações do pintor Eliseu Visconti, de 1918, com desenhos a lápis" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </li>
+        <li class="etapa" style="--tom: #33312D; --tinta: #EDEBE7">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b3" aria-expanded="false" aria-controls="etapa-p3"><span class="etapa__nome">Criar</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p3" role="region" aria-labelledby="etapa-b3">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Criar</p>
+                <p>Vídeo em motion, edição dos seus takes do celular, arte ou carrossel. Você escolhe o formato e produz com método.</p>
+              </div>
+              <figure class="etapa__foto etapa__foto--video">
+                <div class="reel">
+                  <video muted loop playsinline preload="none" poster="assets/paneleiras-take-poster.webp" width="540" height="960" aria-hidden="true" data-video>
+                    <source src="assets/paneleiras-take.webm" type="video/webm">
+                    <source src="assets/paneleiras-take.mp4" type="video/mp4">
+                  </video>
+                  <p class="reel__legenda" aria-hidden="true"><span>Panela de barro capixaba,</span><span>queimada a céu aberto.</span></p>
+                </div>
+                <figcaption>Take real de celular, com legenda. Associação das Paneleiras de Goiabeiras, Vitória (ES).</figcaption>
+              </figure>
+            </div>
+          </div>
+        </li>
+        <li class="etapa" style="--tom: #57534C; --tinta: #EDEBE7">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b4" aria-expanded="false" aria-controls="etapa-p4"><span class="etapa__nome">Dar voz</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p4" role="region" aria-labelledby="etapa-b4">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Dar voz</p>
+                <p>Você gera uma locução natural com o ElevenLabs, em português, sem estúdio e sem gravar dez vezes.</p>
+              </div>
+              <figure class="etapa__foto"><img src="assets/microfone.webp" width="960" height="768" alt="Microfone USB de mesa, prateado" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </li>
+        <li class="etapa" style="--tom: #A49E93; --tinta: #0B0B0A">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b5" aria-expanded="false" aria-controls="etapa-p5"><span class="etapa__nome">Publicar</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p5" role="region" aria-labelledby="etapa-b5">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Publicar</p>
+                <p>Formato certo para cada rede, legenda que funciona e horário escolhido. O post sai do rascunho e vai para o ar.</p>
+              </div>
+              <figure class="etapa__foto"><img src="assets/celular.webp" width="960" height="640" alt="Mão segurando um celular com a tela acesa" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </li>
+        <li class="etapa" style="--tom: #DCD8D0; --tinta: #0B0B0A">
+          <h3 class="etapa__cabeca">
+            <button class="etapa__botao" type="button" id="etapa-b6" aria-expanded="false" aria-controls="etapa-p6"><span class="etapa__nome">Converter e medir</span></button>
+          </h3>
+          <div class="etapa__painel" id="etapa-p6" role="region" aria-labelledby="etapa-b6">
+            <div class="etapa__miolo">
+              <div class="etapa__texto">
+                <p class="etapa__titulo" aria-hidden="true">Converter e medir</p>
+                <p>Uma chamada clara, um caminho direto até o WhatsApp e a leitura do que trouxe cliente. O próximo post já nasce melhor.</p>
+              </div>
+              <figure class="etapa__foto"><img src="assets/bolos-vitrine.webp" width="1280" height="960" alt="Bolos de chocolate numa vitrine iluminada de padaria" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ====================================================================
+         5. AS TRILHAS
+         Cardápio em duas colunas. Cada trilha tem uma foto com o número da
+         trilha no expoente dourado. Montado a partir de dados.js.
+         ==================================================================== -->
+    <section class="trilhas secao" id="trilhas" data-chao="preto" aria-labelledby="trilhas-titulo">
+      <div class="trilhas__cabeca">
+        <h2 class="titulo-secao" id="trilhas-titulo">As trilhas</h2>
+        <p class="trilhas__conta">Sete trilhas, do zero à venda</p>
+      </div>
+      <ol class="cardapio" start="0" data-render="trilhas" aria-label="Trilhas da PotencIA"></ol>
+      <noscript><p class="aviso-noscript">Ative o JavaScript para ver as sete trilhas, da Trilha 0 (Primeiros passos) à Trilha 6 (Da postagem à venda).</p></noscript>
+    </section>
+
+    <!-- ====================================================================
+         6. FERRAMENTAS
+         Os nomes em escala de pôster, só em texto, cada um com seu papel.
+         ==================================================================== -->
+    <section class="ferramentas secao" id="ferramentas" data-chao="preto" aria-labelledby="ferramentas-titulo">
+      <ul class="cartaz">
+        <li class="cartaz__linha cartaz__linha--titulo"><h2 class="cartaz__nome" id="ferramentas-titulo">Ferramentas</h2></li>
+        <li class="cartaz__linha">
+          <span class="cartaz__nome">Claude</span>
+          <p class="cartaz__papel">Escreve roteiros, legendas e o código dos seus vídeos. É com ele que você conversa em toda a jornada.</p>
+        </li>
+        <li class="cartaz__linha">
+          <span class="cartaz__nome">GitHub</span>
+          <p class="cartaz__papel">Guarda seus projetos e modelos, com o histórico de cada versão. Nada se perde quando você muda algo.</p>
+        </li>
+        <li class="cartaz__linha">
+          <span class="cartaz__nome">Remotion</span>
+          <p class="cartaz__papel">Transforma o roteiro em vídeo: animação e edição feitas com o código que o Claude escreve por você.</p>
+        </li>
+        <li class="cartaz__linha">
+          <span class="cartaz__nome">ElevenLabs</span>
+          <p class="cartaz__papel">Dá voz ao seu vídeo: locução natural em português, sem microfone caro e sem estúdio.</p>
+        </li>
+      </ul>
+      <p class="ferramentas__nota">Você não precisa saber programar. As aulas mostram cada clique.</p>
+    </section>
+
+    <!-- ====================================================================
+         7. SEMPRE ATUALIZADA
+         Painel escuro recuado das bordas; as palavras do título se acendem
+         com a rolagem; o calendário de virar aparece no recorte do símbolo.
+         ==================================================================== -->
+    <section class="sempre secao" id="sempre-atualizada" data-chao="papel" aria-labelledby="sempre-titulo">
+      <div class="sempre__painel">
+        <h2 class="sempre__titulo" id="sempre-titulo" data-acender>A IA muda todo mês. <br>As trilhas também.</h2>
+        <figure class="sempre__foto">
+          <div class="recorte-expoente">
+            <img src="assets/calendario-quadrado.webp" width="1100" height="1100" alt="Calendário de mesa antigo, de virar as folhas, mostrando o dia 5" loading="lazy" decoding="async">
+          </div>
+        </figure>
+        <div class="sempre__blocos">
+          <div class="sempre__bloco">
+            <h3>Por que assinatura</h3>
+            <p>Ferramenta de IA ganha versão nova, botão muda de lugar, recurso novo aparece. Curso gravado uma vez fica velho em semanas. Aqui, a aula acompanha a ferramenta.</p>
+          </div>
+          <div class="sempre__bloco">
+            <h3>O que chega todo mês</h3>
+            <p>Aulas revisadas quando uma ferramenta muda, aulas novas quando surge um recurso que vale o seu tempo e um resumo curto do que mudou.</p>
+          </div>
+          <a class="botao botao--ouro" href="#lista">Entrar na lista de espera</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         8. PLANOS (VALORES PROVISÓRIOS)
+         Três blocos que sobem como degraus: o plano maior é literalmente maior.
+         Valores e itens vêm de dados.js.
+         ==================================================================== -->
+    <section class="planos secao" id="planos" data-chao="papel" aria-labelledby="planos-titulo">
+      <div class="planos__palco">
+        <div class="planos__cabeca">
+          <h2 class="titulo-secao" id="planos-titulo">Planos mensais</h2>
+          <p class="planos__condicao" data-render="condicao">Condição de fundador: quem entra na lista de espera paga metade nos três primeiros meses e mantém o preço de lançamento por um ano.</p>
+        </div>
+        <ul class="degraus" data-render="planos" aria-label="Planos de assinatura"></ul>
+      </div>
+      <p class="planos__nota">Valores provisórios, ainda em validação.</p>
+      <noscript><p class="aviso-noscript">Ative o JavaScript para ver os três planos mensais.</p></noscript>
+    </section>
+
+    <!-- ====================================================================
+         9. QUEM ESTÁ CONSTRUINDO
+         Retratos em blocos de cor (fotos provisórias com iniciais).
+         Nomes, funções e fotos em dados.js.
+         ==================================================================== -->
+    <section class="equipe secao" id="equipe" data-chao="pedra" aria-labelledby="equipe-titulo">
+      <h2 class="titulo-secao" id="equipe-titulo">Quem está construindo</h2>
+      <ul class="equipe__grade" data-render="equipe" aria-label="Equipe"></ul>
+      <noscript><p class="aviso-noscript">Ative o JavaScript para ver a equipe.</p></noscript>
+    </section>
+
+    <!-- ====================================================================
+         10. NO HACKATHON
+         Quadro de blocos: o título, o contexto e o roadmap honesto, com a
+         etapa atual em dourado.
+         ==================================================================== -->
+    <section class="hackathon secao" id="hackathon" data-chao="preto" aria-labelledby="hackathon-titulo">
+      <div class="quadro">
+        <div class="quadro__bloco quadro__bloco--titulo">
+          <h2 class="titulo-secao" id="hackathon-titulo">No <span data-hackathon>[nome do hackathon]</span></h2>
+        </div>
+        <div class="quadro__bloco quadro__bloco--texto">
+          <p>A PotencIA está no começo. Estamos apresentando o projeto no <span data-hackathon>[nome do hackathon]</span> para ouvir a banca, testar a proposta com empresários de verdade e formar a primeira turma pela lista de espera.</p>
+        </div>
+        <ol class="quadro__etapas" aria-label="Etapas do projeto">
+          <li class="quadro__bloco quadro__etapa">
+            <span class="quadro__nome">Ideia</span>
+            <span class="quadro__descricao">Problema, público e proposta definidos.</span>
+            <span class="quadro__estado">Feito</span>
+          </li>
+          <li class="quadro__bloco quadro__etapa quadro__etapa--atual" aria-current="step">
+            <span class="quadro__nome">Hackathon</span>
+            <span class="quadro__descricao">Apresentação, conversa com a banca e primeiros inscritos.</span>
+            <span class="quadro__estado">Agora</span>
+          </li>
+          <li class="quadro__bloco quadro__etapa">
+            <span class="quadro__nome">MVP</span>
+            <span class="quadro__descricao">Primeiras trilhas gravadas e testadas com a turma da lista de espera.</span>
+            <span class="quadro__estado">Próximo passo</span>
+          </li>
+          <li class="quadro__bloco quadro__etapa">
+            <span class="quadro__nome">Lançamento</span>
+            <span class="quadro__descricao">Assinatura aberta para empresários de todo o Brasil.</span>
+            <span class="quadro__estado">Depois</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         11. LISTA DE ESPERA
+         O formulário é um cupom de fundador para destacar no picote.
+         Envio preparado para Formspree (endpoint em dados.js).
+         ==================================================================== -->
+    <section class="lista secao" id="lista" data-chao="preto" aria-labelledby="lista-titulo">
+      <div class="cupom" data-cupom>
+        <div class="cupom__canhoto">
+          <h2 class="cupom__titulo" id="lista-titulo">Garanta seu lugar.</h2>
+          <p class="cupom__texto" data-render="condicao-cupom">Quem entra agora garante a condição de fundador: metade do valor nos três primeiros meses e o preço de lançamento por um ano. Entrar na lista é gratuito.</p>
+          <span class="cupom__expoente" aria-hidden="true"></span>
+        </div>
+
+        <div class="cupom__picote" aria-hidden="true"><span class="cupom__furo cupom__furo--a"></span><span class="cupom__furo cupom__furo--b"></span></div>
+
+        <form class="cupom__form" data-form action="" method="post" novalidate>
+          <div class="campo">
+            <input class="campo__entrada" id="f-nome" name="nome" type="text" autocomplete="name" required placeholder=" " aria-describedby="f-nome-erro">
+            <label class="campo__rotulo" for="f-nome">Nome</label>
+            <p class="campo__erro" id="f-nome-erro" aria-live="polite"></p>
+          </div>
+          <div class="campo">
+            <input class="campo__entrada" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required placeholder=" " aria-describedby="f-email-erro">
+            <label class="campo__rotulo" for="f-email">E-mail</label>
+            <p class="campo__erro" id="f-email-erro" aria-live="polite"></p>
+          </div>
+          <div class="campo">
+            <input class="campo__entrada" id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" required placeholder=" " aria-describedby="f-whatsapp-erro">
+            <label class="campo__rotulo" for="f-whatsapp">WhatsApp com DDD</label>
+            <p class="campo__erro" id="f-whatsapp-erro" aria-live="polite"></p>
+          </div>
+          <div class="campo campo--escolha">
+            <select class="campo__entrada" id="f-segmento" name="segmento" required aria-describedby="f-segmento-erro" data-render="segmentos">
+              <option value="" selected disabled>Escolha uma opção</option>
+            </select>
+            <label class="campo__rotulo" for="f-segmento">Segmento do negócio</label>
+            <p class="campo__erro" id="f-segmento-erro" aria-live="polite"></p>
+          </div>
+          <input type="hidden" name="plano_de_interesse" value="" data-plano-interesse>
+          <input type="text" name="_gotcha" class="campo__armadilha" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="botao botao--escuro cupom__enviar" type="submit" data-enviar>Entrar na lista de espera</button>
+          <p class="cupom__privacidade">Usamos seus dados só para falar da PotencIA. Sem spam.</p>
+          <p class="cupom__falha" role="alert" data-falha></p>
+        </form>
+
+        <div class="cupom__sucesso" data-sucesso hidden tabindex="-1">
+          <span class="cupom__sucesso-simbolo" aria-hidden="true"><span></span><span></span></span>
+          <p class="cupom__sucesso-titulo" data-sucesso-titulo>Pronto. Você está na lista.</p>
+          <p>Sua condição de fundador está guardada. Quando a primeira turma abrir, a gente avisa pelo WhatsApp.</p>
+          <a class="link link--sublinhado" href="#topo">Voltar ao início</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================================================================
+       12. RODAPÉ
+       Fecho com frase e CTA; faixa um tom acima com a marca construída em
+       blocos que crescem, links, redes sociais e créditos das imagens.
+       ====================================================================== -->
+  <footer class="rodape" data-chao="preto">
+    <div class="rodape__fecho">
+      <p class="rodape__frase">Faça mais com o que você já tem.</p>
+      <a class="botao" href="#lista">Entrar na lista de espera</a>
+    </div>
+
+    <div class="rodape__faixa">
+      <div class="rodape__marca" aria-hidden="true" data-marca-blocos>
+        <span class="bloco" style="--h: .58; --tom: #2B2926; --letra: #EDEBE7">P</span>
+        <span class="bloco" style="--h: .63; --tom: #33312D; --letra: #EDEBE7">o</span>
+        <span class="bloco" style="--h: .68; --tom: #46433D; --letra: #EDEBE7">t</span>
+        <span class="bloco" style="--h: .74; --tom: #57534C; --letra: #EDEBE7">e</span>
+        <span class="bloco" style="--h: .80; --tom: #8C877E; --letra: #0B0B0A">n</span>
+        <span class="bloco" style="--h: .86; --tom: #A49E93; --letra: #0B0B0A">c</span>
+        <span class="bloco" style="--h: .93; --tom: #C9C4BA; --letra: #0B0B0A">I</span>
+        <span class="bloco bloco--ultimo" style="--h: 1; --tom: #EDEBE7; --letra: #0B0B0A">A<i class="bloco__expoente"></i></span>
+      </div>
+
+      <div class="rodape__colunas">
+        <nav class="rodape__coluna" aria-label="A plataforma">
+          <p class="rodape__titulo">A plataforma</p>
+          <a class="link" href="#como-funciona">Como funciona</a>
+          <a class="link" href="#trilhas">Trilhas</a>
+          <a class="link" href="#ferramentas">Ferramentas</a>
+          <a class="link" href="#planos">Planos</a>
+        </nav>
+        <nav class="rodape__coluna" aria-label="O projeto">
+          <p class="rodape__titulo">O projeto</p>
+          <a class="link" href="#equipe">Equipe</a>
+          <a class="link" href="#hackathon">No hackathon</a>
+          <a class="link" href="#lista">Lista de espera</a>
+        </nav>
+        <nav class="rodape__coluna" aria-label="Redes sociais" data-render="redes">
+          <p class="rodape__titulo">Redes</p>
+        </nav>
+        <div class="rodape__coluna rodape__coluna--contato">
+          <p class="rodape__titulo">De todo o Brasil, online</p>
+          <p>Trilhas por assinatura mensal para pequenos e médios negócios.</p>
+          <p data-render="email"></p>
+        </div>
+      </div>
+
+      <div class="rodape__base">
+        <p>© 2026 PotencIA. Projeto em validação, apresentado no <span data-hackathon>[nome do hackathon]</span>.</p>
+        <a class="botao botao--pequeno" href="#lista">Entrar na lista de espera</a>
+      </div>
+
+      <!-- Créditos das fotos e do vídeo (licenças abertas, Wikimedia Commons). Mantenha enquanto as imagens estiverem no site. -->
+      <p class="rodape__creditos">Fotos e vídeo, via Wikimedia Commons:
+        <a href="https://commons.wikimedia.org/wiki/File:P%C3%A3o_franc%C3%AAs_carioca.jpg">“Pão francês carioca”</a> e <a href="https://commons.wikimedia.org/wiki/File:Bolos_de_chocolate_em_vitrine_suada.jpg">“Bolos de chocolate em vitrine suada”</a>, de Gabriel Del Cima (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Barbearia_oldschool..._-_panoramio.jpg">“Barbearia oldschool”</a>, de RicardoSAPO (<a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Pizza_Chester_(2639682027).jpg">“Pizza Chester”</a>, de Cristian Janke (<a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Coxinha_-_iguaria_brasileira_01.jpg">“Coxinha, iguaria brasileira”</a>, de Sintegrity (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:A%C3%A7a%C3%AD_na_tigela_2.jpg">“Açaí na tigela 2”</a>, de Melsj (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Brigadeiros.jpg">“Brigadeiros”</a>, de Rodrigogomesonetwo (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:HP_laptop_keyboard.jpg">“HP laptop keyboard”</a>, de Gugalcrom123 (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Eliseu_Visconti_Colheita_do_Trigo_-_anota%C3%A7%C3%B5es_do_caderno_(CD010),_p%C3%A1gina_36.jpg">caderno de anotações de Eliseu Visconti, 1918</a> (<a href="https://creativecommons.org/publicdomain/mark/1.0/">domínio público</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Type_case_with_movable_types_for_letterpress_printing_in_the_Gutenberg_Museum,_Mainz,_Germany_(48988492232).jpg">“Type case with movable types”</a>, de dronepicr (<a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Blue_Snowflake_USB_microphone.jpg">“Blue Snowflake USB microphone”</a>, de Marie-Lan Nguyen (<a href="https://creativecommons.org/licenses/by/2.5">CC BY 2.5</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Smartphone_in_Hand_(Unsplash).jpg">“Smartphone in Hand”</a>, de NeONBRAND (<a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>);
+        <a href="https://commons.wikimedia.org/wiki/File:Petaluma_and_Santa_Rosa_Railroad_Co._Calendar.jpg">“Petaluma and Santa Rosa Railroad Co. Calendar”</a>, de Visitor7 (<a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>);
+        vídeo <a href="https://commons.wikimedia.org/wiki/File:Associa%C3%A7%C3%A3o-das-Paneleiras-de-Goiabeiras.webm">“Associação das Paneleiras de Goiabeiras”</a>, de Arinegf (<a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>), trecho de 9 segundos.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Dados editáveis primeiro; depois as bibliotecas (CDN); por fim o main.js -->
+  <script src="dados.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>
