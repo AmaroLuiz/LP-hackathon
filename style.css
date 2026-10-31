@@ -1,11 +1,11 @@
 /* ==========================================================================
    PotencIA · style.css
    Direção: um único motivo rege o sistema. "Potência", na matemática, é o
-   expoente (x²): um quadrado dourado fosco elevado no canto superior direito
-   marca o símbolo, as ações, as trilhas, a etapa atual e o fecho da página.
-   Paleta da marca: preto profundo, off-white quente, cinzas neutros e dourado
-   fosco como acento. Tipografia: Chillax. Cantos retos em tudo (o motivo é um
-   quadrado). Mobile-first: a base é o celular; telas maiores em @media.
+   expoente (x²): um quadrado dourado elevado no canto superior direito
+   marca as ações, as trilhas, a etapa atual e o fecho da página.
+   Paleta da marca: carvão como base, creme nos fundos claros, sálvia para o
+   crescimento e dourado como destaque. Tipografia: Chillax (o nome da marca
+   usa Libre Baskerville, como na logo). Cantos retos em tudo. Mobile-first.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -13,17 +13,20 @@
    -------------------------------------------------------------------------- */
 :root {
   /* Paleta da marca */
-  --preto: #0B0B0A;        /* preto profundo: chão das seções escuras */
-  --grafite: #1A1917;      /* um tom acima do preto: superfícies no escuro */
-  --carvao: #2B2926;       /* segundo tom no escuro */
-  --cinza-escuro: #57534C; /* cinza neutro quente (texto secundário no claro) */
-  --cinza: #8C877E;        /* cinza médio */
-  --cinza-claro: #A49E93;  /* texto secundário no escuro (7,4:1 sobre o preto) */
-  --pedra: #DCD8D0;        /* superfície no claro */
-  --papel: #EDEBE7;        /* off-white quente: chão das seções claras */
-  --ouro: #C1A876;         /* dourado fosco: o acento */
-  --ouro-texto: #6B5527;   /* dourado para texto sobre fundo claro (contraste AA) */
-  --erro: #8A1C1C;
+  --preto: #171E19;        /* carvão (base): chão das seções escuras */
+  --grafite: #1F2822;      /* um tom acima do carvão: superfícies no escuro */
+  --carvao: #2A342D;       /* segundo tom no escuro */
+  --cinza-escuro: #4E5750; /* cinza esverdeado (texto secundário no claro, 6,7:1 sobre o creme) */
+  --cinza: #858C83;        /* cinza médio */
+  --cinza-claro: #A6ADA2;  /* texto secundário no escuro (7,4:1 sobre o carvão) */
+  --pedra: #E7E0D1;        /* superfície no claro: creme um tom abaixo */
+  --papel: #F6F1E7;        /* creme: chão das seções claras */
+  --texto: #1A1A1A;        /* texto sobre fundo claro */
+  --ouro: #F2B705;         /* dourado: energia e destaque */
+  --ouro-texto: #7A5A00;   /* dourado para texto sobre fundo claro (contraste AA) */
+  --salvia: #6B8F71;       /* verde-oliva/sálvia: crescimento orgânico, sutil */
+  --salvia-clara: #A9BFA9; /* sálvia clara, para tons e rampas */
+  --erro: #9A2A1F;
 
   /* Papéis de cor: mudam conforme o chão da seção (ver [data-chao]) */
   --chao: var(--preto);
@@ -38,6 +41,7 @@
   /* Tipografia: troque as famílias aqui (e o <link> de fontes no index.html) */
   --fonte-titulo: 'Chillax', 'Helvetica Neue', Arial, sans-serif;
   --fonte-texto: 'Chillax', 'Helvetica Neue', Arial, sans-serif;
+  --fonte-marca: 'Libre Baskerville', Georgia, 'Times New Roman', serif; /* só o nome "PotencIA" */
 
   /* Escala: poucos tamanhos, bem distantes entre si */
   --passo-pequeno: clamp(0.8125rem, 0.78rem + 0.12vw, 0.875rem);   /* 13–14 px  notas, créditos */
@@ -69,11 +73,11 @@
   --acento-texto: var(--ouro); --botao-fundo: var(--papel); --botao-tinta: var(--preto); --foco: var(--ouro);
 }
 [data-chao="papel"] {
-  --chao: var(--papel); --tinta: var(--preto); --suave: var(--cinza-escuro); --superficie: var(--pedra);
+  --chao: var(--papel); --tinta: var(--texto); --suave: var(--cinza-escuro); --superficie: var(--pedra);
   --acento-texto: var(--ouro-texto); --botao-fundo: var(--preto); --botao-tinta: var(--papel); --foco: var(--preto);
 }
 [data-chao="pedra"] {
-  --chao: var(--pedra); --tinta: var(--preto); --suave: #4D4943; --superficie: #CDC8BE;
+  --chao: var(--pedra); --tinta: var(--texto); --suave: #4A524B; --superficie: #D9D1BF;
   --acento-texto: var(--ouro-texto); --botao-fundo: var(--preto); --botao-tinta: var(--papel); --foco: var(--preto);
 }
 
@@ -199,41 +203,64 @@ p, li, figcaption { text-wrap: pretty; }
   .link--sublinhado:hover { text-decoration-color: var(--ouro); }
 }
 
-/* Marca: símbolo (base + expoente) e nome */
+/* Marca: o nó da logo (em sálvia) e o nome em serifa, como na logo */
 .marca {
-  display: inline-flex; align-items: center; gap: 0.6rem;
-  font-size: var(--passo-destaque); font-weight: 600; letter-spacing: -0.025em;
+  display: inline-flex; align-items: center; gap: 0.7rem;
   line-height: 1; text-decoration: none;
 }
-.marca__simbolo { width: 1.45rem; height: 1.45rem; overflow: visible; }
-.marca__base { fill: currentColor; }
-.marca__expoente {
-  fill: var(--ouro);
-  transform-box: fill-box; transform-origin: 0% 100%;
-  transition: transform var(--t-ui) var(--ease-out);
+.marca__simbolo { flex: none; width: 2.25rem; height: 2.25rem; color: var(--salvia); }
+.marca__simbolo use { transform-box: fill-box; transform-origin: center; transition: transform 700ms var(--ease-out); }
+.marca__nome {
+  font-family: var(--fonte-marca); font-weight: 700;
+  font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+  letter-spacing: 0.03em;
 }
+/* O nó tem simetria de 90°: um quarto de volta no hover e ele volta ao mesmo desenho */
 @media (hover: hover) and (pointer: fine) {
-  .marca:hover .marca__expoente { transform: translate(1.5px, -1.5px) scale(1.3); }
+  .marca:hover .marca__simbolo use { transform: rotate(90deg); }
 }
 
 /* --------------------------------------------------------------------------
    4. Cabeçalho e menu do celular
    -------------------------------------------------------------------------- */
+/* Vidro no estilo Apple: pílula flutuante, translúcida na cor da seção que está embaixo
+   (--cab-chao, trocada pelo main.js), com desfoque e saturação do que passa por trás,
+   borda fina, brilho especular no alto e sombra suave. Sem suporte a desfoque: fica sólida. */
 .cabecalho {
-  position: fixed; inset: 0 0 auto 0; z-index: 50;
-  height: var(--cab-altura);
+  --vidro-borda: color-mix(in srgb, var(--cab-tinta, var(--papel)) 14%, transparent);
+  position: fixed; z-index: 50;
+  top: 0.75rem; left: 0.75rem; right: 0.75rem;
+  max-width: 76rem; margin: 0 auto;
+  height: calc(var(--cab-altura) - 0.75rem);
   display: flex; align-items: center; gap: 2rem;
-  padding: 0 var(--margem);
-  background: var(--cab-chao, var(--preto));
+  padding: 0 0.5rem 0 1.1rem;
+  border: 1px solid var(--vidro-borda);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--cab-chao, var(--preto)) 58%, transparent);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 55%, rgba(255, 255, 255, 0));
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 0.75rem 2rem -0.9rem rgba(0, 0, 0, 0.45);
   color: var(--cab-tinta, var(--papel));
-  transition: transform 450ms var(--ease-out), background-color 200ms ease, color 200ms ease;
+  transition: transform 450ms var(--ease-out), background-color 300ms ease, color 300ms ease, border-color 300ms ease;
 }
-.cabecalho.is-escondido { transform: translateY(-100%); }
-.cabecalho .botao { --botao-fundo: var(--cab-tinta, var(--papel)); --botao-tinta: var(--cab-chao, var(--preto)); margin-top: 0; min-height: 2.5rem; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cabecalho { background-color: var(--cab-chao, var(--preto)); }
+}
+.cabecalho.is-escondido { transform: translateY(calc(-100% - 1rem)); }
+/* Na pílula, o botão também é pílula (sem o quadradinho do expoente) */
+.cabecalho .botao {
+  --botao-fundo: var(--cab-tinta, var(--papel)); --botao-tinta: var(--cab-chao, var(--preto));
+  margin: 0; min-height: 2.5rem; padding: 0 1.15rem; border-radius: 999px;
+}
+.cabecalho .botao::after { display: none; }
 .cabecalho__nav { display: none; }
 .cabecalho__acao { display: none; }
 .cabecalho__menu {
-  margin-left: auto; min-height: 2.75rem; padding: 0 0.25rem;
+  margin-left: auto; min-height: 2.75rem; padding: 0 0.75rem;
   font-size: var(--passo-ui); font-weight: 500;
   text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.28em;
   transition: text-decoration-color var(--t-hover) ease;
@@ -248,7 +275,6 @@ p, li, figcaption { text-wrap: pretty; }
 }
 .menu-movel[hidden] { display: none; }
 .menu-movel__topo { height: var(--cab-altura); display: flex; align-items: center; justify-content: space-between; }
-.menu-movel__topo .marca__nome { font-size: var(--passo-destaque); font-weight: 600; letter-spacing: -0.025em; }
 .menu-movel__nav { display: flex; flex-direction: column; margin: 2.5rem 0 auto; }
 .menu-movel__nav a {
   padding: 0.3rem 0;
@@ -260,79 +286,112 @@ p, li, figcaption { text-wrap: pretty; }
 @keyframes menu-entra { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
 
 @media (min-width: 64em) {
-  .cabecalho__nav { display: flex; gap: 1.75rem; margin-left: auto; font-size: var(--passo-ui); font-weight: 500; }
+  .cabecalho { padding-left: 1.35rem; }
+  .cabecalho__nav { display: flex; gap: 0.15rem; margin-left: auto; font-size: var(--passo-ui); font-weight: 500; }
+  /* Links em pílula: um fundo leve acende no hover, como nos menus da Apple */
+  .cabecalho__nav a {
+    padding: 0.45rem 0.85rem; border-radius: 999px;
+    text-decoration: none;
+    transition: background-color var(--t-hover) ease;
+  }
+  .cabecalho__nav a:hover { background-color: color-mix(in srgb, var(--cab-tinta, var(--papel)) 11%, transparent); }
   .cabecalho__acao { display: inline-flex; }
   .cabecalho__menu { display: none; }
 }
 
 /* --------------------------------------------------------------------------
-   5. Abertura (hero)
+   5. Abertura (hero): título gigante no centro, o nó da logo em linhas finas
+   ao fundo e uma vitrine de peças feitas com o método flutuando em volta.
+   No celular as peças ficam em leque abaixo do botão.
    -------------------------------------------------------------------------- */
 .hero {
+  position: relative; isolation: isolate;
   min-height: 100svh;
-  padding: calc(var(--cab-altura) + 2.25rem) var(--margem) 0;
+  padding: calc(var(--cab-altura) + 2.5rem) var(--margem) 3rem;
   overflow: clip;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; justify-content: center;
 }
+.hero__fundo {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(58% 52% at 50% 50%, rgba(107, 143, 113, 0.2), rgba(107, 143, 113, 0) 72%);
+}
+.hero__no {
+  --no: max(150vw, 34rem);
+  position: absolute;
+  width: var(--no); height: var(--no);
+  left: calc(50% - var(--no) / 2); top: calc(42% - var(--no) / 2);
+  color: var(--salvia); opacity: 0.4;
+  overflow: visible;
+}
+.hero__no path { vector-effect: non-scaling-stroke; stroke-width: 1px; }
+
+.hero__miolo { position: relative; z-index: 2; display: grid; justify-items: center; text-align: center; }
 .hero__titulo {
-  font-size: clamp(1.5rem, 8.4vw, 8rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  margin-left: -0.04em;
+  font-size: clamp(2.5rem, 12.2vw, 9rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
 }
+.hero__destaque { font-style: normal; color: var(--ouro); }
 .linha { display: block; padding-bottom: 0.12em; margin-bottom: -0.12em; }
 .linha__in { display: block; white-space: nowrap; }
-.troca { display: inline-block; position: relative; white-space: nowrap; vertical-align: top; }
+/* A palavra que alterna: o recorte lateral impede que ela invada o "de" enquanto a caixa cresce */
+.troca { display: inline-block; position: relative; white-space: nowrap; vertical-align: top; clip-path: inset(-0.3em -0.04em -0.35em 0); }
+.hero__apoio { margin-top: 1.5rem; font-size: var(--passo-destaque); line-height: 1.38; max-width: 31ch; }
+.hero__acoes { margin-top: 1.75rem; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1.1rem 1.75rem; }
+.hero__prova { margin-top: 1.4rem; font-size: var(--passo-pequeno); letter-spacing: 0.02em; color: var(--suave); }
+.hero__prova span { margin: 0 0.35em; color: var(--salvia); }
+.botao--grande { --exp: 0.8rem; min-height: 3.75rem; padding: 0 2rem; font-size: 1.0625rem; }
 
-.hero__rodape {
-  margin-top: 1.75rem;
-  display: grid; gap: 1.25rem;
-  max-width: 34rem;
-}
-.hero__apoio { font-size: var(--passo-destaque); line-height: 1.38; max-width: 30ch; }
-.hero__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; }
-
-/* O símbolo gigante: base (com fotos) + expoente dourado */
-.simbolo-gigante {
-  --b: 78vw;                      /* lado da base */
-  --g: 2.4vw;                     /* respiro entre base e expoente */
-  --e: calc(var(--b) * 0.4);      /* lado do expoente */
+/* Vitrine (celular primeiro: leque abaixo do botão) */
+.vitrine { position: relative; z-index: 1; height: clamp(16rem, 76vw, 26rem); margin-top: 2.5rem; }
+.peca { position: absolute; width: var(--w); }
+.peca--reel { --w: min(34vw, 11rem); left: calc(50% - var(--w) / 2); top: 0; z-index: 2; }
+.peca--bolo { --w: min(38vw, 13rem); left: max(0px, calc(50% - var(--w) * 1.42)); top: 14%; }
+.peca--pao { --w: min(38vw, 13rem); right: max(0px, calc(50% - var(--w) * 1.42)); top: 7%; }
+.peca--verde { display: none; }
+.peca__corpo {
   position: relative;
-  flex: none;
-  width: var(--b);
-  aspect-ratio: 1;
-  align-self: flex-end;
-  margin: auto calc(var(--e) + var(--g)) -14vw 0;
+  transform: rotate(var(--giro));
+  box-shadow: 0 2.5rem 4rem -1.75rem rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(246, 241, 231, 0.07);
 }
-.hero__rodape { margin-bottom: calc(var(--e, 31vw) + var(--g, 2.4vw) + 2.25rem); }
-.simbolo-gigante__base { position: absolute; inset: 0; overflow: hidden; background: var(--carvao); }
-.simbolo-gigante__base img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 1.6s var(--ease-suave);
+.peca__corpo > svg { width: 100%; height: auto; }
+.peca__tela { position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: #0C100D; border: 5px solid #0C100D; }
+.peca__tela video { width: 100%; height: 100%; object-fit: cover; }
+.peca__legenda {
+  position: absolute; left: 6%; right: 6%; bottom: 12%;
+  display: flex; flex-direction: column; align-items: center; gap: 0.1em;
+  font-size: clamp(0.5rem, 1.6vw, 0.7rem); font-weight: 600; line-height: 1.25; text-align: center;
 }
-.simbolo-gigante__base img.is-ativa { opacity: 1; }
-.simbolo-gigante__expoente {
-  position: absolute;
-  width: 40%; aspect-ratio: 1;
-  left: calc(100% + var(--g));
-  bottom: calc(100% + var(--g));
-  background: var(--ouro);
+.peca__legenda span { padding: 0.08em 0.4em; background: rgba(0, 0, 0, 0.72); color: #fff; white-space: nowrap; }
+/* Etiqueta: o que é a peça, com o quadradinho dourado da marca */
+.peca__etiqueta {
+  position: absolute; left: -0.5rem; top: -0.95rem;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.32rem 0.6rem 0.32rem 0.5rem;
+  background: var(--papel); color: var(--texto);
+  font-size: 0.75rem; font-weight: 600; line-height: 1.1; white-space: nowrap;
+  box-shadow: 0 0.6rem 1.2rem -0.5rem rgba(0, 0, 0, 0.5);
+}
+.peca__etiqueta::before { content: ''; width: 0.45rem; height: 0.45rem; background: var(--ouro); }
+.peca__etiqueta span { font-weight: 500; color: var(--cinza-escuro); }
+
+@media (min-width: 40em) {
+  .hero__quebra { display: none; }
+  .hero__titulo { font-size: clamp(2.5rem, 8.6vw, 9rem); }
 }
 
+/* Telas grandes: a vitrine sai do fluxo e as peças ocupam os quatro cantos em volta do título */
 @media (min-width: 64em) {
-  .hero { padding-top: calc(var(--cab-altura) + 7svh); }
-  .hero__titulo { font-size: min(7.2vw, 14.5svh); }
-  .hero__rodape { position: absolute; left: var(--margem); bottom: 9svh; width: min(34vw, 32rem); margin: 0; }
-  .simbolo-gigante {
-    --b: min(38vw, 64svh);
-    --g: max(0.9vw, 12px);
-    position: absolute;
-    top: 47svh;
-    right: calc(var(--margem) + var(--e) + var(--g));
-    margin: 0;
-  }
+  .hero { padding: calc(var(--cab-altura) + 3rem) var(--margem) 5rem; }
+  .hero__no { --no: min(122vmin, 78rem); top: calc(50% - var(--no) / 2); }
+  .hero__titulo { font-size: min(7.3vw, 14svh); }
+  .hero__apoio { max-width: 34ch; }
+  .vitrine { position: absolute; inset: 0; height: auto; margin: 0; pointer-events: none; }
+  .peca--bolo { --w: min(11.5vw, 21svh); left: 3.5vw; top: calc(var(--cab-altura) + 4svh); }
+  .peca--reel { --w: min(10vw, 19svh); left: 9.5vw; top: auto; bottom: 5svh; }
+  .peca--pao { --w: min(13vw, 24svh); right: 3vw; top: calc(var(--cab-altura) + 5svh); }
+  .peca--verde { --w: min(11vw, 20svh); display: block; right: 9.5vw; bottom: 6svh; }
+  .peca__etiqueta { font-size: 0.8125rem; }
 }
 
 /* --------------------------------------------------------------------------
@@ -772,7 +831,7 @@ html:not(.js) .etapa__painel { grid-template-rows: 1fr; }
   --furo: 1.75rem;
   position: relative;
   display: grid;
-  background: var(--papel); color: var(--preto);
+  background: var(--papel); color: var(--texto);
   --foco: var(--preto);
 }
 .cupom__canhoto { position: relative; display: grid; gap: 1.25rem; align-content: space-between; padding: 2.75rem 1.5rem 2.25rem; }
@@ -796,17 +855,17 @@ html:not(.js) .etapa__painel { grid-template-rows: 1fr; }
 .campo__entrada {
   width: 100%; height: 3.5rem;
   padding: 1.35rem 1rem 0.4rem;
-  background: #E0DDD6; color: var(--preto);
+  background: #ECE5D7; color: var(--texto);
   border: 0; border-radius: 0;
   font-size: max(1rem, var(--passo-corpo));
   appearance: none; -webkit-appearance: none;
   transition: background-color var(--t-hover) ease;
 }
-.campo__entrada:focus { outline: none; background: #D6D2C9; }
+.campo__entrada:focus { outline: none; background: #E3DBCB; }
 .campo__entrada:focus-visible { outline: 2px solid var(--preto); outline-offset: 2px; }
 select.campo__entrada {
   padding-right: 2.75rem; cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%230B0B0A' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%231A1A1A' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.1rem;
 }
 .campo::after {
@@ -829,10 +888,10 @@ select.campo__entrada {
 .campo__entrada:focus + .campo__rotulo,
 .campo__entrada:not(:placeholder-shown) + .campo__rotulo,
 .campo--escolha .campo__rotulo { transform: translateY(-0.62rem) scale(0.74); }
-.campo__entrada:focus + .campo__rotulo { color: var(--preto); }
+.campo__entrada:focus + .campo__rotulo { color: var(--texto); }
 .campo__erro { margin-top: 0.3rem; font-size: var(--passo-pequeno); color: var(--erro); font-weight: 500; }
 .campo__erro:empty { display: none; }
-.campo.is-invalido .campo__entrada { background: #EAD9D6; }
+.campo.is-invalido .campo__entrada { background: #F3DDD3; }
 .campo.is-invalido::after { transform: scaleX(1); background: var(--erro); }
 .campo__armadilha { position: absolute; left: -9999px; top: 0; opacity: 0; pointer-events: none; }
 .cupom__enviar { width: calc(100% - 1.25rem); margin-top: 1.25rem; justify-content: flex-start; }
@@ -888,7 +947,7 @@ select.campo__entrada {
 }
 .bloco {
   position: relative; flex: 1 1 0; min-width: 0;
-  height: calc(var(--h) * 100%);
+  height: calc((var(--h) + var(--sobe, 0)) * 100%); /* --sobe: o efeito Dock do hover (main.js) */
   display: flex; align-items: flex-end; justify-content: center;
   overflow: hidden;
   background: var(--tom); color: var(--letra, var(--grafite));
@@ -897,7 +956,11 @@ select.campo__entrada {
   line-height: 0.82; letter-spacing: -0.04em;
   padding-bottom: 0.05em;
   transform-origin: 50% 100%;
+  transition: background-color 280ms ease, color 280ms ease;
 }
+/* O bloco sob o ponteiro acende em dourado */
+.bloco.is-aceso { background: var(--ouro); color: var(--preto); }
+.bloco--ultimo.is-aceso .bloco__expoente { background: var(--papel); }
 .bloco--ultimo { overflow: visible; }
 .bloco__expoente {
   position: absolute;
@@ -933,9 +996,43 @@ select.campo__entrada {
 .movimento:not(.intro-feita) .hero .linha { overflow: hidden; }
 .movimento:not(.intro-feita) .hero .linha__in { transform: translate3d(0, 108%, 0); }
 .movimento:not(.intro-feita) .hero [data-entrada] { opacity: 0; transform: translate3d(0, 24px, 0); }
-.movimento:not(.intro-feita) .simbolo-gigante__base { clip-path: inset(100% 0% 0% 0%); }
-.movimento:not(.intro-feita) .simbolo-gigante__expoente { opacity: 0; transform: translate(-60%, 60%) scale(0.5); }
+.movimento:not(.intro-feita) .hero .peca__corpo { opacity: 0; }
 .movimento:not(.intro-feita) .cabecalho { opacity: 0; }
+
+/* Abertura: o nó é desenhado, o nome sobe e a tela abre (3 s, ver main.js).
+   Só existe com .movimento. Rede de segurança: se o JavaScript não a conduzir,
+   ela some sozinha depois de 6 s. */
+.abertura { display: none; }
+.movimento .abertura {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background: var(--preto); color: var(--salvia);
+  cursor: pointer;
+  animation: abertura-reserva 400ms ease 6s forwards;
+}
+.movimento.abertura-feita .abertura { display: none; }
+@keyframes abertura-reserva { to { opacity: 0; visibility: hidden; } }
+.abertura__logo { display: grid; justify-items: center; }
+.abertura__giro { width: clamp(9.5rem, 34vmin, 17rem); }
+.abertura__no { width: 100%; height: auto; overflow: visible; }
+/* pathLength="1" em cada trecho: o traço vai de escondido (1) a completo (0) */
+.abertura__no path { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.abertura__nome {
+  display: flex; overflow: hidden;
+  margin-top: clamp(1.25rem, 3.4vmin, 2rem);
+  padding: 0.08em 0.1em 0.12em;
+  color: var(--papel);
+  font-family: var(--fonte-marca); font-weight: 700;
+  font-size: clamp(1.75rem, 5.6vmin, 2.75rem);
+  letter-spacing: 0.05em; line-height: 1.1;
+}
+.abertura__nome span { display: inline-block; transform: translate3d(0, 110%, 0); }
+.abertura__traco {
+  width: clamp(2.25rem, 6vmin, 3rem); height: 3px;
+  margin-top: clamp(0.9rem, 2.2vmin, 1.25rem);
+  background: var(--ouro);
+  transform: scaleX(0);
+}
 
 /* Menu aberto: a página por trás não rola */
 .menu-aberto, .menu-aberto body { overflow: hidden; }
@@ -949,8 +1046,7 @@ select.campo__entrada {
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
-  .simbolo-gigante__base img,
   .etapa, .etapa__painel, .etapa__botao,
-  .cabecalho, .slide { transition: none !important; }
+  .cabecalho, .slide, .marca__simbolo use { transition: none !important; }
   .menu-movel:not([hidden]) { animation: none; }
 }

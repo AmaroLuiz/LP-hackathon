@@ -79,8 +79,8 @@
     const f = DADOS.fundador || {};
     // Cada degrau tem um tom da paleta e uma faixa-botão num tom mais escuro.
     const tons = [
-      { tom: 'var(--pedra)', escuro: '#CBC6BB', tinta: 'var(--preto)' },
-      { tom: 'var(--cinza-escuro)', escuro: '#46433D', tinta: 'var(--papel)' },
+      { tom: 'var(--pedra)', escuro: '#D9D1BF', tinta: 'var(--texto)' },
+      { tom: '#3F5A46', escuro: '#2F4537', tinta: 'var(--papel)' },
       { tom: 'var(--grafite)', escuro: 'var(--preto)', tinta: 'var(--papel)' }
     ];
     lista.innerHTML = DADOS.planos.map((p, i) => {
@@ -113,10 +113,10 @@
     const lista = $('[data-render="equipe"]');
     if (!lista || !Array.isArray(DADOS.equipe)) return;
     const tons = [
-      { tom: '#C9C4BA', tinta: 'var(--preto)' },
-      { tom: '#A49E93', tinta: 'var(--preto)' },
-      { tom: '#57534C', tinta: 'var(--papel)' },
-      { tom: '#2B2926', tinta: 'var(--papel)' }
+      { tom: '#C9D3C4', tinta: 'var(--preto)' },
+      { tom: 'var(--salvia)', tinta: 'var(--preto)' },
+      { tom: '#3F5A46', tinta: 'var(--papel)' },
+      { tom: 'var(--carvao)', tinta: 'var(--papel)' }
     ];
     lista.innerHTML = DADOS.equipe.map((p, i) => {
       const t = tons[i % tons.length];
@@ -251,6 +251,35 @@
     }
   }
 
+  // Rodapé: os blocos de "PotencIA" se comportam como o Dock do Mac. O bloco sob o ponteiro
+  // cresce mais e acende em dourado; os vizinhos crescem menos, numa onda que segue o mouse.
+  // Só com mouse; com movimento reduzido, fica apenas o dourado (sem crescer).
+  function iniciarMarcaRodape() {
+    const marca = $('[data-marca-blocos]');
+    if (!marca || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const blocos = $$('.bloco', marca);
+    const crescer = temGsap && !calmo.matches;
+    const alturas = crescer ? blocos.map((b) => gsap.quickTo(b, '--sobe', { duration: 0.55, ease: 'power3' })) : [];
+    const ALCANCE = 2.4;  // quantos blocos de cada lado sentem o ponteiro
+    const MAXIMO = 0.24;  // quanto o bloco sob o ponteiro cresce (fração da altura da faixa)
+
+    marca.addEventListener('pointermove', (e) => {
+      blocos.forEach((b, i) => {
+        const caixa = b.getBoundingClientRect();
+        const distancia = Math.abs(e.clientX - (caixa.left + caixa.width / 2)) / caixa.width;
+        const t = Math.max(0, 1 - distancia / ALCANCE);
+        if (crescer) alturas[i](MAXIMO * t * t * (3 - 2 * t)); // curva suave (smoothstep)
+        b.classList.toggle('is-aceso', distancia < 0.5);
+      });
+    });
+    marca.addEventListener('pointerleave', () => {
+      blocos.forEach((b, i) => {
+        if (crescer) alturas[i](0);
+        b.classList.remove('is-aceso');
+      });
+    });
+  }
+
   // Imagens dentro dos SVGs de exemplo só carregam quando o post se aproxima da tela.
   function carregarImagensSvg(raiz) {
     $$('image[data-href]', raiz).forEach((img) => {
@@ -267,37 +296,44 @@
     raizes.forEach((r) => io.observe(r));
   }
 
-  // Símbolo do hero: troca lenta entre fotos de pequenos negócios.
-  function iniciarTrocaDeFotos() {
-    const base = $('.simbolo-gigante__base');
-    if (!base) return;
-    const extras = (base.dataset.fotos || '').split(',').map((s) => s.trim()).filter(Boolean);
-    const acrescentar = () => extras.forEach((src) => {
-      const img = new Image();
-      img.src = src; img.alt = ''; img.width = 1000; img.height = 1000; img.decoding = 'async';
-      base.appendChild(img);
-    });
-    if (document.readyState === 'complete') acrescentar();
-    else window.addEventListener('load', acrescentar, { once: true });
-    if (calmo.matches) return; // movimento reduzido: fica a primeira foto
+  // Hero: o nó da logo vira o fundo, em linhas finas (cópia do nó da abertura).
+  function montarFundoHero() {
+    const fundo = $('[data-hero-fundo]');
+    const no = $('.abertura__no');
+    if (!fundo || !no) return;
+    const copia = no.cloneNode(true);
+    copia.setAttribute('class', 'hero__no');
+    copia.removeAttribute('stroke-width');
+    $$('path', copia).forEach((p) => p.removeAttribute('style'));
+    fundo.appendChild(copia);
+  }
 
-    let atual = 0, relogio = null, visivel = true;
-    const passo = () => {
-      const fotos = $$('img', base);
-      if (fotos.length < 2) return;
-      const proxima = (atual + 1) % fotos.length;
-      if (!fotos[proxima].complete) return;
-      fotos[atual].classList.remove('is-ativa');
-      fotos[proxima].classList.add('is-ativa');
-      atual = proxima;
-    };
-    const ligar = () => { if (!relogio && visivel && !document.hidden) relogio = window.setInterval(passo, 5600); };
-    const desligar = () => { window.clearInterval(relogio); relogio = null; };
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([en]) => { visivel = en.isIntersecting; if (visivel) ligar(); else desligar(); }).observe(base);
-    }
-    document.addEventListener('visibilitychange', () => (document.hidden ? desligar() : ligar()));
-    ligar();
+  // Hero: o reel da vitrine toca só enquanto aparece (com movimento reduzido fica o pôster).
+  function iniciarVideoHero() {
+    const video = $('[data-hero-video]');
+    if (!video || calmo.matches) return;
+    const tocar = () => video.play().catch(() => {});
+    if (!('IntersectionObserver' in window)) { tocar(); return; }
+    new IntersectionObserver(([en]) => (en.isIntersecting ? tocar() : video.pause())).observe(video);
+  }
+
+  // Desenha um nó ao longo do próprio percurso: cada trecho traz sua posição (data-de/data-ate,
+  // de 0 a 1) e pathLength="1"; as linhas da fita avançam juntas. Devolve o tween.
+  function desenharNo(svg, vars) {
+    const trechos = $$('path', svg).map((el) => ({ el, de: +el.dataset.de, ate: +el.dataset.ate }));
+    const inicio = Math.min(...trechos.map((t) => t.de));
+    const fim = Math.max(...trechos.map((t) => t.ate));
+    trechos.forEach((t) => { t.el.style.strokeDasharray = '1 1'; t.el.style.strokeDashoffset = '1'; });
+    const desenho = { p: 0 };
+    return gsap.to(desenho, {
+      p: 1, ...vars,
+      onUpdate: () => {
+        const pos = inicio + (fim - inicio) * desenho.p;
+        trechos.forEach((t) => {
+          t.el.style.strokeDashoffset = String(1 - Math.min(1, Math.max(0, (pos - t.de) / (t.ate - t.de))));
+        });
+      }
+    });
   }
 
   // Comparador antes/depois: arrastar, tocar, teclado e os dois botões.
@@ -637,18 +673,119 @@
     });
   }
 
-  // Abertura: linhas do título, símbolo que abre e expoente que sobe.
-  function entradaHero() {
+  // Abertura da logo (cerca de 3 s): o nó é desenhado ao longo do próprio percurso, com as
+  // quatro linhas da fita juntas, enquanto gira um oitavo de volta e assenta; o nome sobe letra
+  // a letra e o traço dourado se abre. Depois o nome se recolhe e o nó cresce até virar o nó
+  // gigante do fundo da hero (mesma posição, linhas afinando até o fio de 1 px), enquanto a
+  // tela escura se dissolve e a hero entra. Clique ou tecla acelera.
+  // `depois` (a entrada do hero) recebe { noPronto: true } quando o nó já chega desenhado.
+  function aberturaLogo(depois) {
+    const tela = $('[data-abertura]');
+    if (!tela) { depois(); return; }
+    if (lenis) lenis.stop();
+    tela.style.animation = 'none'; // o JavaScript assumiu: a rede de segurança do CSS sai
+
+    const giro = $('.abertura__giro', tela);
+    const noAbertura = $('.abertura__no', tela);
+    const noHero = $('.hero__no');
+    // Só dá para encaixar no nó da hero se ela estiver na tela (página no topo).
+    const transformar = Boolean(noHero) && window.scrollY < 10;
+    // Medidas tomadas antes de qualquer giro: de onde o nó sai e onde ele precisa chegar.
+    let chegada = null;
+    if (transformar) {
+      const a = giro.getBoundingClientRect();
+      const b = noHero.getBoundingClientRect();
+      chegada = {
+        x: b.left + b.width / 2 - (a.left + a.width / 2),
+        y: b.top + b.height / 2 - (a.top + a.height / 2),
+        escala: b.width / a.width,
+        // traço final em unidades do desenho, para dar 1 px na tela (como o fio da hero)
+        traco: noAbertura.viewBox.baseVal.width / b.width,
+        opacidade: parseFloat(getComputedStyle(noHero).opacity) || 0.4
+      };
+      gsap.set(noHero, { visibility: 'hidden' });
+    }
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        doc.classList.add('abertura-feita');
+        if (lenis) lenis.start();
+        removerPulo();
+      }
+    });
+    tl.add(desenharNo(noAbertura, { duration: 1.7, ease: 'power1.inOut' }), 0.1)
+      .fromTo(giro, { rotation: -45, scale: 0.88 }, { rotation: 0, scale: 1, duration: 1.9, ease: 'power3.out' }, 0.05)
+      .to('.abertura__nome span', { y: 0, duration: 0.6, stagger: 0.045, ease: 'power3.out' }, 1.3)
+      .to('.abertura__traco', { scaleX: 1, duration: 0.45, ease: 'power2.out' }, 1.7)
+      .addLabel('saida', 2.15);
+
+    if (transformar) {
+      tl.set(tela, { pointerEvents: 'none' }, 'saida')
+        .to(['.abertura__nome', '.abertura__traco'], { opacity: 0, y: 14, duration: 0.35, ease: 'power2.in' }, 'saida')
+        .to(giro, { x: chegada.x, y: chegada.y, scale: chegada.escala, duration: 1.05, ease: 'expo.inOut' }, 'saida+=0.05')
+        .to(noAbertura, { attr: { 'stroke-width': chegada.traco }, opacity: chegada.opacidade, duration: 1.05, ease: 'expo.inOut' }, 'saida+=0.05')
+        .to(tela, { backgroundColor: 'rgba(23, 30, 25, 0)', duration: 0.7, ease: 'power2.inOut' }, 'saida+=0.3')
+        .add(() => depois({ noPronto: true }), 'saida+=0.6')
+        // o nó da abertura chegou: o da hero assume no mesmo lugar
+        .add(() => { gsap.set(noHero, { visibility: 'visible' }); gsap.set(tela, { autoAlpha: 0 }); }, 'saida+=1.1');
+    } else {
+      gsap.set(tela, { clipPath: 'inset(0% 0% 0% 0%)' });
+      tl.to(tela, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.65, ease: 'expo.inOut' }, 'saida')
+        .to('.abertura__logo', { y: '-8vh', opacity: 0.3, duration: 0.65, ease: 'expo.inOut' }, 'saida')
+        .add(() => depois(), 'saida+=0.15');
+    }
+
+    // Clique ou tecla: acelera até o fim (a página aparece em menos de um segundo).
+    const pular = () => { tl.timeScale(4); removerPulo(); };
+    function removerPulo() {
+      tela.removeEventListener('click', pular);
+      window.removeEventListener('keydown', pular);
+    }
+    tela.addEventListener('click', pular);
+    window.addEventListener('keydown', pular);
+  }
+
+  // Entrada do hero: o nó do fundo se desenha (a menos que já chegue pronto, vindo da
+  // abertura), as linhas do título sobem, as peças da vitrine chegam girando de baixo e
+  // assentam, e o texto de apoio aparece. Depois a hero fica viva.
+  function entradaHero(opcoes = {}) {
+    const giro = (el) => parseFloat(el.closest('.peca').style.getPropertyValue('--giro')) || 0;
+    const no = $('.hero__no');
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     tl.to('.cabecalho', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 0)
       .to('.hero .linha__in', { y: 0, duration: 1.15, stagger: 0.12 }, 0.12)
-      .to('.simbolo-gigante__base', { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.35, ease: 'expo.inOut' }, 0.22)
-      .fromTo('.simbolo-gigante__base img', { scale: 1.14 }, { scale: 1, duration: 1.9, ease: 'expo.out' }, 0.3)
-      .to('.simbolo-gigante__expoente', { opacity: 1, x: 0, y: 0, scale: 1, duration: 1.05, ease: 'expo.out' }, 1.05)
-      .to('.hero [data-entrada]', { opacity: 1, y: 0, duration: 0.9, stagger: 0.09, ease: 'power3.out' }, 0.8)
-      .add(() => { doc.classList.add('intro-feita'); trocarPalavras(); }, 1.3);
-    // Marca do cabeçalho: o expoente sobe uma vez.
-    gsap.from('.marca__expoente', { x: -5, y: 5, scale: 0.4, duration: 0.9, ease: 'expo.out', delay: 0.6 });
+      .fromTo('.hero .peca__corpo',
+        { opacity: 0, y: 160, scale: 0.82, rotation: (i, el) => giro(el) - 18 },
+        { opacity: 1, y: 0, scale: 1, rotation: (i, el) => giro(el), duration: 1.5, stagger: 0.09, ease: 'expo.out' }, 0.3)
+      .to('.hero [data-entrada]', { opacity: 1, y: 0, duration: 0.9, stagger: 0.09, ease: 'power3.out' }, 0.75)
+      .add(() => { doc.classList.add('intro-feita'); trocarPalavras(); heroViva(); }, 1.3);
+    if (no && !opcoes.noPronto) tl.add(desenharNo(no, { duration: 2.6, ease: 'power2.inOut' }), 0);
+    // Marca do cabeçalho: o nó dá um quarto de volta e assenta, uma vez.
+    gsap.from('.cabecalho .marca__simbolo', { rotation: -90, scale: 0.7, opacity: 0, duration: 1.2, ease: 'expo.out', delay: 0.5 });
+  }
+
+  // Hero viva: as peças flutuam devagar, cada uma no seu ritmo; com mouse, elas e o nó
+  // seguem o ponteiro em profundidades diferentes (as de data-profundidade maior andam mais).
+  function heroViva() {
+    $$('.hero .peca__flutua').forEach((el, i) => {
+      gsap.to(el, { y: i % 2 ? 10 : -10, rotation: i % 2 ? 1.2 : -1.2, duration: 3.1 + i * 0.45, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+    });
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const hero = $('.hero');
+    const seguir = (el, duracao) => ({ x: gsap.quickTo(el, 'x', { duration: duracao, ease: 'power3' }), y: gsap.quickTo(el, 'y', { duration: duracao, ease: 'power3' }) });
+    const alvos = $$('.hero .peca').map((el) => ({ prof: +el.dataset.profundidade || 1, ...seguir(el, 1) }));
+    const no = $('.hero__no');
+    const fundo = no ? seguir(no, 1.6) : null;
+    hero.addEventListener('pointermove', (e) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      alvos.forEach((a) => { a.x(nx * 46 * a.prof); a.y(ny * 30 * a.prof); });
+      if (fundo) { fundo.x(-nx * 18); fundo.y(-ny * 12); }
+    });
+    hero.addEventListener('pointerleave', () => {
+      alvos.forEach((a) => { a.x(0); a.y(0); });
+      if (fundo) { fundo.x(0); fundo.y(0); }
+    });
   }
 
   // Palavras que se transformam: Conteúdo → Vídeo → Carrossel → Post → Conteúdo.
@@ -663,16 +800,26 @@
     const titulo = troca.closest('h1');
     if (titulo && !titulo.hasAttribute('aria-label')) titulo.setAttribute('aria-label', titulo.textContent.replace(/\s+/g, ' ').trim());
 
+    // Largura que a palavra vai ocupar, medida numa cópia invisível.
+    const medir = (texto) => {
+      const copia = palavra.cloneNode();
+      copia.textContent = texto;
+      copia.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;clip-path:none;transform:none;opacity:1';
+      troca.appendChild(copia);
+      const largura = copia.getBoundingClientRect().width;
+      copia.remove();
+      return largura;
+    };
+    // A palavra sai, a caixa assume a largura da próxima e só então a próxima entra:
+    // nada invade o "de" ao lado.
     const passo = (texto) => {
       gsap.set(troca, { width: palavra.getBoundingClientRect().width });
       gsap.timeline()
-        .to(palavra, { yPercent: -40, opacity: 0, clipPath: 'inset(0% 0% 100% 0%)', duration: 0.42, ease: 'power3.in' })
-        .add(() => {
-          palavra.textContent = texto;
-          gsap.to(troca, { width: palavra.getBoundingClientRect().width, duration: 0.6, ease: 'expo.inOut' });
-        })
+        .to(palavra, { yPercent: -40, opacity: 0, clipPath: 'inset(0% 0% 100% 0%)', duration: 0.42, ease: 'power3.in' }, 0)
+        .to(troca, { width: medir(texto), duration: 0.5, ease: 'expo.inOut' }, 0.2)
+        .add(() => { palavra.textContent = texto; }, 0.42)
         .fromTo(palavra, { yPercent: 40, opacity: 0, clipPath: 'inset(100% 0% 0% 0%)' },
-          { yPercent: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: 0.65, ease: 'expo.out', immediateRender: false });
+          { yPercent: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', duration: 0.65, ease: 'expo.out', immediateRender: false }, 0.6);
     };
     const limpar = () => {
       palavra.textContent = original;
@@ -708,9 +855,17 @@
   function movimentoDasSecoes() {
     const desktop = window.matchMedia('(min-width: 56.25em)').matches;
 
-    // Hero: ao rolar, o símbolo sobe e o expoente sobe um pouco mais.
-    gsap.to('.simbolo-gigante', { yPercent: -8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-    gsap.to('.simbolo-gigante__expoente', { yPercent: -45, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    // Hero: ao rolar, as peças sobem e se afastam do centro em velocidades diferentes,
+    // o nó do fundo gira devagar e o título sobe um pouco.
+    const rolagemHero = () => ({ trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true });
+    $$('.hero .peca').forEach((el) => {
+      const prof = +el.dataset.profundidade || 1;
+      const caixa = el.getBoundingClientRect();
+      const lado = caixa.left + caixa.width / 2 < window.innerWidth / 2 ? -1 : 1;
+      gsap.to(el, { yPercent: (desktop ? -45 : -12) * prof, xPercent: desktop ? lado * 18 * prof : 0, ease: 'none', scrollTrigger: rolagemHero() });
+    });
+    gsap.to('.hero__no', { rotation: 30, scale: 1.08, ease: 'none', scrollTrigger: rolagemHero() });
+    gsap.to('.hero__miolo', { yPercent: -10, ease: 'none', scrollTrigger: rolagemHero() });
 
     // O problema: a frase entra palavra a palavra; as miniaturas saltam; o feed passa de lado.
     const declaracao = $('[data-declaracao]');
@@ -772,8 +927,8 @@
       const titulo = $('[data-acender]');
       if (titulo && typeof window.SplitText !== 'undefined') {
         const palavras = SplitText.create(titulo, { type: 'words', wordsClass: 'palavra' });
-        gsap.fromTo(palavras.words, { color: '#8C877E' }, {
-          color: '#EDEBE7', ease: 'none', stagger: 0.12,
+        gsap.fromTo(palavras.words, { color: '#5C675F' }, {
+          color: '#F6F1E7', ease: 'none', stagger: 0.12,
           scrollTrigger: { trigger: painel, start: 'top 72%', end: 'top 12%', scrub: true }
         });
       }
@@ -855,9 +1010,10 @@
     iniciarAncoras();
     iniciarMenu();
     iniciarImagensSvg();
-    iniciarTrocaDeFotos();
+    montarFundoHero();
+    iniciarVideoHero();
     if (comMovimento()) {
-      entradaHero();
+      aberturaLogo(entradaHero);
       chaoDasSecoes();
       movimentoDasSecoes();
     }
@@ -868,6 +1024,7 @@
     iniciarVideo();
     iniciarFormulario();
     iniciarCabecalho();
+    iniciarMarcaRodape();
 
     // Recalcula os gatilhos quando fontes e imagens terminam de carregar.
     if (temGsap) {
