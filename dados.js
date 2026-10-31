@@ -12,7 +12,7 @@ window.POTENCIA_DADOS = {
      ------------------------------------------------------------------------ */
   config: {
     // Nome do evento. Aparece no bloco do hackathon, nos planos e no rodapé.
-    hackathon: '[nome do hackathon]',
+    hackathon: 'SE²PIN²',
 
     // Endereço que recebe os cadastros da lista de espera.
     // Formspree: crie um formulário em https://formspree.io, copie o endpoint
