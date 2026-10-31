@@ -18,7 +18,7 @@ Página única, estática (HTML, CSS e JavaScript), pronta para publicar em qual
 - **Paleta:** carvão `#171E19` (base), creme `#F6F1E7` (fundos claros), texto `#1A1A1A`, dourado `#F2B705` (energia e destaque) e verde-oliva/sálvia `#6B8F71` (crescimento, sutil). Tudo em variáveis no topo do `style.css`.
 - **Logo:** o nó vem como `<symbol id="s-simbolo">` no `index.html` (versão simplificada, nítida em tamanho pequeno) e o nome "PotencIA" é texto em Libre Baskerville. Favicon, `apple-touch-icon.png` e `og-image.jpg` já usam a logo nova.
 - **Abertura (cerca de 3 s):** ao carregar, o nó é desenhado ao longo do próprio percurso e o nome aparece; depois o nó cresce e se encaixa no nó gigante do fundo da hero (linhas afinando até 1 px) enquanto a tela escura se dissolve e a hero entra. Se a página abrir no meio da rolagem, a tela simplesmente sobe. Clique ou qualquer tecla acelera; com movimento reduzido ou sem JavaScript ela não aparece, e se algo falhar some sozinha em 6 s. Marcação no início do `index.html` (`.abertura`), tempo em `aberturaLogo()` no `main.js`.
-- O nó foi redesenhado em vetor a partir da imagem da logo (`node .claude/gerar-logo.mjs` gera de novo). Se existir o arquivo vetorial original, ele pode substituir o desenho.
+- O nó foi redesenhado em vetor a partir da imagem da logo. Se existir o arquivo vetorial original, ele pode substituir o desenho.
 
 ## Antes da apresentação
 

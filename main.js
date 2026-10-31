@@ -58,6 +58,7 @@
     lista.style.setProperty('--linhas', String(Math.ceil(DADOS.trilhas.length / 2)));
     lista.innerHTML = DADOS.trilhas.map((t) => `
       <li class="prato">
+        <span class="prato__fio" aria-hidden="true"></span>
         <div class="prato__foto">
           <img src="${escapar(t.foto)}" width="160" height="160" alt="" loading="lazy" decoding="async">
           <span class="prato__expoente" aria-hidden="true">${escapar(t.numero)}</span>
@@ -87,10 +88,11 @@
       const t = tons[i % tons.length];
       const promo = f.desconto ? Math.round(p.preco * (1 - f.desconto) * 100) / 100 : null;
       return `
-      <li class="degrau" style="--tom: ${t.tom}; --tom-escuro: ${t.escuro}; --tinta-degrau: ${t.tinta}">
+      <li class="degrau" style="--tom: ${t.tom}; --tom-escuro: ${t.escuro}; --tinta-degrau: ${t.tinta}" data-inclinar data-brilho>
+        ${i === 1 ? '<span class="etiqueta degrau__selo">Recomendado</span>' : ''}
         <div class="degrau__corpo">
           <h3 class="degrau__nome">${escapar(p.nome)}</h3>
-          <p class="degrau__preco">${reais(p.preco)}<small>/mês</small></p>
+          <p class="degrau__preco"><span data-contar="${p.preco}">${reais(p.preco)}</span><small>/mês</small></p>
           <ul class="degrau__inclui">${(p.inclui || []).map((item) => `<li>${escapar(item)}</li>`).join('')}</ul>
           ${promo !== null ? `<p class="degrau__fundador">Na lista de espera: ${reais(promo)}/mês nos ${escapar(f.meses)} primeiros meses</p>` : ''}
         </div>
@@ -127,7 +129,7 @@
         : `<span class="pessoa__iniciais" aria-hidden="true">${escapar(iniciais.toUpperCase())}</span>`;
       return `
       <li class="pessoa">
-        <div class="pessoa__retrato" style="--tom: ${t.tom}; --tinta-retrato: ${t.tinta}">${retrato}</div>
+        <div class="pessoa__retrato" style="--tom: ${t.tom}; --tinta-retrato: ${t.tinta}">${retrato}<svg class="pessoa__no" aria-hidden="true" focusable="false"><use href="#s-simbolo"/></svg></div>
         <p class="pessoa__nome">${escapar(p.nome)}</p>
         <p class="pessoa__funcao">${escapar(p.funcao)}</p>
       </li>`;
@@ -298,14 +300,7 @@
 
   // Hero: o nó da logo vira o fundo, em linhas finas (cópia do nó da abertura).
   function montarFundoHero() {
-    const fundo = $('[data-hero-fundo]');
-    const no = $('.abertura__no');
-    if (!fundo || !no) return;
-    const copia = no.cloneNode(true);
-    copia.setAttribute('class', 'hero__no');
-    copia.removeAttribute('stroke-width');
-    $$('path', copia).forEach((p) => p.removeAttribute('style'));
-    fundo.appendChild(copia);
+    clonarNo($('[data-hero-fundo]'), 'hero__no');
   }
 
   // Hero: o reel da vitrine toca só enquanto aparece (com movimento reduzido fica o pôster).
@@ -435,102 +430,165 @@
     });
   }
 
-  // Vídeo da etapa "Criar": toca só quando visível e com a etapa aberta.
-  function iniciarVideo() {
-    const video = $('[data-video]');
-    if (!video) return;
-    if (calmo.matches) return; // fica o pôster
-    let naTela = false;
-    const atualizar = () => {
-      const aberta = video.closest('.etapa')?.classList.contains('is-aberta');
-      if (naTela && aberta) {
-        if (video.preload === 'none') video.preload = 'auto';
-        const promessa = video.play();
-        if (promessa) promessa.catch(() => {});
-      } else video.pause();
-    };
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([en]) => { naTela = en.isIntersecting && en.intersectionRatio > 0.2; atualizar(); }, { threshold: [0, 0.2, 0.6] }).observe(video);
-    }
-    document.addEventListener('etapa-mudou', atualizar);
-  }
-
-  // Acordeão da jornada. No computador (com movimento), as etapas abrem com a
-  // rolagem enquanto a fileira fica fixa; no celular, abrem ao entrar na tela.
+  // Como funciona: "o fio da jornada". No computador (com movimento) a seção fica presa e a
+  // rolagem vira um percurso horizontal; uma fita sálvia pendurada de estação em estação se
+  // desenha até o meio da tela e, quando chega numa estação, ela acende e o artefato ganha
+  // vida. No celular, a linha desce na vertical e cada estação acende ao entrar na tela.
+  // Sem movimento, tudo fica no estado final (o CSS já mostra assim).
   function iniciarJornada() {
-    const lista = $('[data-etapas]');
-    if (!lista) return;
-    const etapas = $$('.etapa', lista);
-    const n = etapas.length;
-    const desktop = window.matchMedia('(min-width: 56.25em)');
-    let fixa = null; // ScrollTrigger com a fileira fixa (pin)
+    const secao = $('[data-jornada]');
+    if (!secao || !comMovimento()) return;
+    const trilho = $('[data-jornada-trilho]', secao);
+    const estacoes = $$('[data-estacao]', secao);
+    const contador = $('[data-jornada-contador]', secao);
+    const barra = $('[data-jornada-barra]', secao);
+    const dois = (n) => String(n).padStart(2, '0');
+    estacoes.forEach(rebobinarArtefato);
 
-    const abrirSo = (i) => {
-      etapas.forEach((etapa, j) => {
-        const aberta = i === j;
-        etapa.classList.toggle('is-aberta', aberta);
-        $('.etapa__botao', etapa).setAttribute('aria-expanded', String(aberta));
-      });
-      document.dispatchEvent(new Event('etapa-mudou'));
-    };
-    const alternar = (i) => {
-      const etapa = etapas[i];
-      const aberta = !etapa.classList.contains('is-aberta');
-      etapa.classList.toggle('is-aberta', aberta);
-      $('.etapa__botao', etapa).setAttribute('aria-expanded', String(aberta));
-      document.dispatchEvent(new Event('etapa-mudou'));
+    const ativar = (estacao) => {
+      if (estacao.classList.contains('is-ativa')) return;
+      estacao.classList.add('is-ativa');
+      animarArtefato(estacao);
     };
 
-    etapas.forEach((etapa, i) => {
-      $('.etapa__botao', etapa).addEventListener('click', () => {
-        if (desktop.matches) {
-          if (fixa) { // leva a rolagem até o trecho da etapa; a abertura acompanha
-            const alvo = fixa.start + (fixa.end - fixa.start) * ((i + 0.5) / n);
-            rolarPara(alvo, { duration: 1.1 });
-          } else abrirSo(i);
-        } else alternar(i);
-      });
-    });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 56.25em)', () => {
+      secao.classList.add('is-horizontal');
+      const fio = $('[data-fio]', secao);
+      const fundo = $('[data-fio-fundo]', secao);
+      let tabela = [];
+      let comprimento = 1;
 
-    let gatilhosCelular = [];
+      // Traça a fita: começa no texto de abertura e "pendura" entre as marcas das estações,
+      // como um fio preso em pregos; depois da última, sai pela direita.
+      const tracar = () => {
+        const base = trilho.getBoundingClientRect();
+        const pontos = estacoes.map((e) => {
+          const r = $('.estacao__marca', e).getBoundingClientRect();
+          return { x: r.left + r.width / 2 - base.left, y: r.top + r.height / 2 - base.top };
+        });
+        if (!pontos.length) return;
+        const y = pontos[0].y;
+        const queda = Math.min(window.innerHeight * 0.1, 110);
+        let d = `M ${Math.round(pontos[0].x - window.innerWidth * 0.32)} ${Math.round(y + queda * 0.6)} C ${Math.round(pontos[0].x - window.innerWidth * 0.16)} ${Math.round(y + queda)}, ${Math.round(pontos[0].x - 80)} ${Math.round(y)}, ${Math.round(pontos[0].x)} ${Math.round(y)}`;
+        for (let i = 1; i < pontos.length; i++) {
+          const a = pontos[i - 1], b = pontos[i], meio = (b.x - a.x) / 2;
+          d += ` C ${Math.round(a.x + meio * 0.6)} ${Math.round(a.y + queda)}, ${Math.round(b.x - meio * 0.6)} ${Math.round(b.y + queda)}, ${Math.round(b.x)} ${Math.round(b.y)}`;
+        }
+        const ultimo = pontos[pontos.length - 1];
+        d += ` C ${Math.round(ultimo.x + 160)} ${Math.round(ultimo.y + queda)}, ${Math.round(ultimo.x + 320)} ${Math.round(ultimo.y + queda * 1.6)}, ${Math.round(base.width)} ${Math.round(ultimo.y + queda * 2.2)}`;
+        fio.setAttribute('d', d);
+        fundo.setAttribute('d', d);
+        comprimento = fio.getTotalLength();
+        tabela = [];
+        for (let i = 0; i <= 600; i++) {
+          const l = (comprimento * i) / 600;
+          tabela.push({ l, x: fio.getPointAtLength(l).x });
+        }
+        fio.style.strokeDasharray = `${comprimento} ${comprimento}`;
+      };
 
-    // Celular: cada etapa abre ao entrar na tela. Sem movimento (ou sem GSAP): tudo aberto.
-    const prepararCelular = () => {
-      if (!comMovimento()) { etapas.forEach((etapa, i) => { if (!etapa.classList.contains('is-aberta')) alternar(i); }); return; }
-      gatilhosCelular = etapas.map((etapa, i) => ScrollTrigger.create({
-        trigger: etapa, start: 'top 74%', once: true,
-        onEnter: () => { if (!etapa.classList.contains('is-aberta')) alternar(i); }
-      }));
-    };
+      // A ponta do fio acompanha o meio da tela; as estações que ela já passou acendem.
+      const atualizar = () => {
+        const deslocamento = -gsap.getProperty(trilho, 'x');
+        const ponta = deslocamento + window.innerWidth * 0.52;
+        const achado = tabela.find((p) => p.x >= ponta);
+        const l = achado ? achado.l : comprimento;
+        fio.style.strokeDashoffset = String(comprimento - l);
+        // só acende estações quando a seção já está assentando na tela (não no carregamento)
+        const naTela = secao.getBoundingClientRect().top < window.innerHeight * 0.35;
+        let ultima = 0;
+        estacoes.forEach((e, i) => {
+          if (e.offsetLeft <= ponta && naTela) { ativar(e); ultima = i + 1; }
+        });
+        if (contador) contador.textContent = `${dois(Math.max(1, ultima))} / ${dois(estacoes.length)}`;
+        if (barra) gsap.set(barra, { scaleX: ultima / estacoes.length });
+      };
 
-    // Computador: a fileira fica fixa enquanto as etapas abrem com a rolagem.
-    const prepararDesktop = () => {
-      abrirSo(0);
-      if (!comMovimento()) return;
-      fixa = ScrollTrigger.create({
-        trigger: lista,
-        start: 'top 12%',
-        end: () => `+=${Math.round(window.innerHeight * 2.1)}`,
-        pin: true,
-        anticipatePin: 1,
-        refreshPriority: 1, // calcula antes dos gatilhos que vêm abaixo dela
-        onUpdate: (self) => {
-          const i = Math.min(n - 1, Math.floor(self.progress * n * 0.9999));
-          if (!etapas[i].classList.contains('is-aberta')) abrirSo(i);
+      const distancia = () => Math.max(0, trilho.scrollWidth - window.innerWidth);
+      tracar();
+      gsap.to(trilho, {
+        x: () => -distancia(),
+        ease: 'none',
+        onUpdate: atualizar,
+        scrollTrigger: {
+          trigger: secao, start: 'top top', end: () => `+=${distancia()}`,
+          pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1,
+          onRefresh: () => { tracar(); atualizar(); }
         }
       });
-    };
-
-    if (desktop.matches) prepararDesktop(); else prepararCelular();
-
-    // Ao girar um tablet ou redimensionar a janela entre os dois arranjos.
-    desktop.addEventListener('change', () => {
-      if (fixa) { fixa.kill(true); fixa = null; }
-      gatilhosCelular.forEach((g) => g.kill());
-      gatilhosCelular = [];
-      if (desktop.matches) prepararDesktop(); else prepararCelular();
-      if (temGsap) ScrollTrigger.refresh();
+      atualizar();
+      return () => { secao.classList.remove('is-horizontal'); fio.removeAttribute('d'); fundo.removeAttribute('d'); };
     });
+
+    mm.add('(max-width: 56.24em)', () => {
+      gsap.fromTo('[data-fio-vertical]', { scaleY: 0 }, {
+        scaleY: 1, ease: 'none',
+        scrollTrigger: { trigger: '.estacoes', start: 'top 70%', end: 'bottom 70%', scrub: true }
+      });
+      estacoes.forEach((e) => ScrollTrigger.create({ trigger: e, start: 'top 68%', once: true, onEnter: () => ativar(e) }));
+    });
+  }
+
+  // Deixa cada artefato no ponto de partida da sua animação (só é chamado com movimento).
+  function rebobinarArtefato(estacao) {
+    const artefato = $('.artefato', estacao);
+    if (!artefato) return;
+    gsap.set(artefato, { opacity: 0, y: 50, rotation: -3 });
+    gsap.set($('.artefato__etiqueta', estacao), { scale: 0, transformOrigin: '0% 100%' });
+    gsap.set($$('[data-anima="msg"], [data-anima="zap"]', estacao), { opacity: 0, y: 14 });
+    const digitar = $('[data-digitar]', estacao);
+    if (digitar) { digitar.dataset.texto = digitar.textContent; digitar.textContent = ''; }
+    $$('[data-anima="check"]', estacao).forEach((li) => li.classList.add('is-pendente'));
+    gsap.set($$('.calendario__dias span', estacao), { opacity: 0, scale: 0.7 });
+    gsap.set($$('.calendario__dias i', estacao), { scale: 0, transformOrigin: '0% 100%' });
+    gsap.set($$('.voz__onda i', estacao), { scaleY: 0.12 });
+    gsap.set($('[data-anima="aviso"]', estacao), { opacity: 0, y: -24 });
+    gsap.set($$('.grafico__barras i', estacao), { scaleY: 0 });
+    gsap.set($('[data-anima="cabeca"]', estacao), { left: '0%' });
+  }
+
+  // A estação acendeu: o artefato chega e faz a sua parte.
+  function animarArtefato(estacao) {
+    const artefato = $('.artefato', estacao);
+    if (!artefato) return;
+    const tl = gsap.timeline();
+    tl.to(artefato, { opacity: 1, y: 0, rotation: 0, duration: 1.1, ease: 'expo.out' })
+      .to($('.artefato__etiqueta', estacao), { scale: 1, duration: 0.6, ease: 'back.out(2.4)' }, 0.35);
+
+    if (artefato.classList.contains('artefato--chat')) {
+      const digitar = $('[data-digitar]', estacao);
+      const texto = digitar ? digitar.dataset.texto || '' : '';
+      const n = { c: 0 };
+      const checks = $$('[data-anima="check"]', estacao);
+      tl.to($$('[data-anima="msg"]', estacao), { opacity: 1, y: 0, duration: 0.5, stagger: 0.45, ease: 'power3.out' }, 0.4)
+        .to(n, { c: texto.length, duration: 1.6, ease: 'none', onUpdate: () => { if (digitar) digitar.textContent = texto.slice(0, Math.round(n.c)); } }, 1)
+        .add(() => checks[0]?.classList.remove('is-pendente'), 2.3)
+        .add(() => checks[1]?.classList.remove('is-pendente'), 2.7)
+        .add(() => checks[2]?.classList.remove('is-pendente'), 3.1);
+    } else if (artefato.classList.contains('artefato--calendario')) {
+      tl.to($$('.calendario__dias span', estacao), { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out', stagger: { each: 0.018, from: 'start' } }, 0.3)
+        .to($$('.calendario__dias i', estacao), { scale: 1, duration: 0.5, ease: 'back.out(2.4)', stagger: 0.12 }, 0.9);
+    } else if (artefato.classList.contains('artefato--reel')) {
+      tl.to($('[data-anima="cabeca"]', estacao), { left: '100%', duration: 9, ease: 'none', repeat: -1 }, 0.4);
+    } else if (artefato.classList.contains('artefato--voz')) {
+      tl.to($$('.voz__onda i', estacao), {
+        scaleY: () => gsap.utils.random(0.25, 1), duration: 0.32, ease: 'sine.inOut',
+        stagger: { each: 0.025, repeat: -1, yoyo: true }, repeatRefresh: true
+      }, 0.5);
+    } else if (artefato.classList.contains('artefato--post')) {
+      tl.to($('[data-anima="aviso"]', estacao), { opacity: 1, y: 0, duration: 0.7, ease: 'back.out(2)' }, 1);
+    } else if (artefato.classList.contains('artefato--venda')) {
+      tl.to($$('[data-anima="zap"]', estacao), { opacity: 1, y: 0, duration: 0.45, stagger: 0.6, ease: 'power3.out' }, 0.5)
+        .to($$('.grafico__barras i', estacao), { scaleY: 1, duration: 0.9, stagger: 0.08, ease: 'expo.out' }, 0.8);
+    }
+  }
+
+  // O reel da estação "Criar" toca só enquanto aparece (com movimento reduzido fica o pôster).
+  function iniciarVideo() {
+    const video = $('[data-video]');
+    if (!video || calmo.matches || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(([en]) => (en.isIntersecting ? video.play().catch(() => {}) : video.pause()), { threshold: 0.35 }).observe(video);
   }
 
   // Formulário da lista de espera: validação, máscara, envio e sucesso.
@@ -624,14 +682,14 @@
       sucesso.hidden = false;
       sucesso.focus({ preventScroll: true });
     };
+    const simbolo = $('[data-no-sucesso]', sucesso);
+    if (simbolo && !$('svg', simbolo)) clonarNo(simbolo, 'cupom__sucesso-no');
     if (!comMovimento()) { exibir(); return; }
-    const [base, expoente] = $$('.cupom__sucesso-simbolo span', sucesso);
-    gsap.timeline()
+    const tl = gsap.timeline()
       .to(form, { xPercent: 7, yPercent: 2, rotation: 2.5, opacity: 0, duration: 0.6, ease: 'power3.in' })
       .add(exibir)
-      .from($$(':scope > *', sucesso), { y: 18, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 })
-      .from(base, { scale: 0.6, duration: 0.6, ease: 'expo.out', transformOrigin: '0% 100%' }, '<')
-      .from(expoente, { x: -22, y: 22, scale: 0.4, duration: 0.9, ease: 'expo.out' }, '<0.2');
+      .from($$(':scope > *', sucesso), { y: 18, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 });
+    if (simbolo && $('svg', simbolo)) tl.add(desenharNo($('svg', simbolo), { duration: 1.4, ease: 'power2.inOut' }), '<');
   }
 
   /* ========================================================================
@@ -671,6 +729,154 @@
       scrollTrigger: { trigger: gatilho || els[0], start: inicio, once: true },
       clearProps: 'clipPath'
     });
+  }
+
+  // Copia o nó da abertura (trechos com a posição no percurso) para outro lugar da página.
+  function clonarNo(destino, classe) {
+    const no = $('.abertura__no');
+    if (!destino || !no) return null;
+    const copia = no.cloneNode(true);
+    copia.setAttribute('class', classe);
+    copia.removeAttribute('stroke-width');
+    $$('path', copia).forEach((p) => p.removeAttribute('style'));
+    destino.appendChild(copia);
+    return copia;
+  }
+
+  // O nó em fio ao fundo de algumas seções: ele se desenha conforme a seção passa
+  // e gira devagar com a rolagem. Sem movimento, fica desenhado e parado.
+  function montarFundosNo() {
+    $$('[data-fundo-no]').forEach((fundo) => {
+      const svg = clonarNo(fundo, 'fundo-no__svg');
+      if (!svg || !comMovimento()) return;
+      const secao = fundo.closest('section') || fundo.parentElement;
+      desenharNo(svg, { ease: 'none', scrollTrigger: { trigger: secao, start: 'top 85%', end: 'center 35%', scrub: 1 } });
+      gsap.fromTo(fundo, { rotation: -20 }, { rotation: 20, ease: 'none', scrollTrigger: { trigger: secao, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+  }
+
+  // Inclinação 3D que segue o mouse (cartões, peças, cupom). Para enquanto há foco dentro,
+  // para não atrapalhar quem está digitando.
+  function inclinar(el, maximo = 6) {
+    if (!el || !comMovimento() || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    gsap.set(el, { transformPerspective: 1000 });
+    const rx = gsap.quickTo(el, 'rotationX', { duration: 0.7, ease: 'power3' });
+    const ry = gsap.quickTo(el, 'rotationY', { duration: 0.7, ease: 'power3' });
+    el.addEventListener('pointermove', (e) => {
+      if (el.matches(':focus-within')) { rx(0); ry(0); return; }
+      const caixa = el.getBoundingClientRect();
+      ry(((e.clientX - caixa.left) / caixa.width - 0.5) * maximo * 2);
+      rx(-((e.clientY - caixa.top) / caixa.height - 0.5) * maximo * 2);
+    });
+    el.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  }
+
+  // Brilho que segue o mouse: só informa a posição (--mx, --my); o CSS desenha.
+  function brilhoCursor(el) {
+    if (!el || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    el.addEventListener('pointermove', (e) => {
+      const caixa = el.getBoundingClientRect();
+      el.style.setProperty('--mx', `${Math.round(e.clientX - caixa.left)}px`);
+      el.style.setProperty('--my', `${Math.round(e.clientY - caixa.top)}px`);
+    });
+  }
+
+  // Número que conta até o valor quando aparece (preços dos planos).
+  function contar(el, gatilho) {
+    const valor = Number(el.dataset.contar);
+    if (!Number.isFinite(valor)) return;
+    const n = { v: 0 };
+    el.textContent = reais(0);
+    gsap.to(n, {
+      v: valor, duration: 1.6, ease: 'power3.out',
+      scrollTrigger: { trigger: gatilho || el, start: 'top 82%', once: true },
+      onUpdate: () => { el.textContent = reais(Math.round(n.v)); },
+      onComplete: () => { el.textContent = reais(valor); }
+    });
+  }
+
+  // Trilhas: com mouse, a foto da trilha flutua junto ao cursor, maior, com a etiqueta
+  // do número, e gira um pouco conforme a velocidade do ponteiro.
+  // Quem decide se ela aparece é uma verificação só (conferir): o que está de fato sob o
+  // ponteiro agora. Não depende de pointerenter/pointerleave, que o navegador pode disparar
+  // atrasado (ou não disparar) quando a página rola com o mouse parado.
+  function previaTrilhas() {
+    const cardapio = $('[data-render="trilhas"]');
+    if (!cardapio || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const grandes = { 'mini/paneleiras.webp': 'paneleiras-take-poster.webp', 'mini/tipos.webp': 'mini/tipos.webp' };
+    const fotoGrande = (src) => {
+      const nome = src.split('assets/')[1] || '';
+      return 'assets/' + (grandes[nome] || nome.replace('mini/', ''));
+    };
+    const previa = document.createElement('div');
+    previa.className = 'trilhas__previa';
+    previa.setAttribute('aria-hidden', 'true');
+    previa.innerHTML = '<img alt="" decoding="async"><span class="etiqueta"></span>';
+    document.body.appendChild(previa);
+    const img = $('img', previa);
+    const etiqueta = $('.etiqueta', previa);
+    gsap.set(previa, { xPercent: -50, yPercent: -50, scale: 0.85, autoAlpha: 0 });
+    const px = gsap.quickTo(previa, 'x', { duration: 0.6, ease: 'power3' });
+    const py = gsap.quickTo(previa, 'y', { duration: 0.6, ease: 'power3' });
+    const giro = gsap.quickTo(previa, 'rotation', { duration: 0.9, ease: 'power3' });
+
+    let ponteiro = null;  // última posição do mouse dentro da janela
+    let atual = null;     // trilha cuja foto está na tela
+    let rolando = false;
+    let ultimoX = 0;
+    let fimDaRolagem = 0;
+    let vigia = 0;        // enquanto a foto está visível, confere de tempos em tempos
+
+    const mostrar = (prato) => {
+      if (prato === atual) return;
+      atual = prato;
+      const foto = $('.prato__foto img', prato);
+      img.onerror = () => { img.onerror = null; img.src = foto.src; };
+      img.src = fotoGrande(foto.getAttribute('src') || '');
+      etiqueta.textContent = $('.prato__trilha', prato)?.textContent || '';
+      gsap.to(previa, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out', overwrite: 'auto' });
+      // o conteúdo pode se mover sem rolagem (imagens carregando, layout recalculado)
+      if (!vigia) vigia = window.setInterval(() => conferir(), 250);
+    };
+    const esconder = () => {
+      if (!atual) return;
+      atual = null;
+      window.clearInterval(vigia);
+      vigia = 0;
+      gsap.to(previa, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: 'power2.in', overwrite: 'auto' });
+    };
+    const conferir = () => {
+      const sob = ponteiro && !rolando ? document.elementFromPoint(ponteiro.x, ponteiro.y) : null;
+      const prato = sob ? sob.closest('.prato') : null;
+      if (prato && cardapio.contains(prato)) mostrar(prato);
+      else esconder();
+    };
+
+    window.addEventListener('pointermove', (e) => {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      ponteiro = { x: e.clientX, y: e.clientY };
+      const lado = e.clientX > window.innerWidth * 0.62 ? -1 : 1; // perto da borda direita, vai para a esquerda
+      px(e.clientX + lado * (previa.offsetWidth / 2 + 56));
+      py(e.clientY);
+      giro(gsap.utils.clamp(-9, 9, (e.clientX - ultimoX) * 0.5));
+      ultimoX = e.clientX;
+      conferir();
+    }, { passive: true });
+
+    // Mouse saiu da janela ou a janela perdeu o foco: some.
+    document.documentElement.addEventListener('pointerleave', () => { ponteiro = null; esconder(); });
+    window.addEventListener('blur', () => { ponteiro = null; esconder(); });
+
+    // Durante a rolagem a foto fica escondida; quando a rolagem para, confere de novo.
+    const aoRolar = () => {
+      rolando = true;
+      esconder();
+      window.clearTimeout(fimDaRolagem);
+      fimDaRolagem = window.setTimeout(() => { rolando = false; conferir(); }, 180);
+    };
+    if (lenis) lenis.on('scroll', aoRolar);
+    else window.addEventListener('scroll', aoRolar, { passive: true });
+    ScrollTrigger.addEventListener('refresh', conferir);
   }
 
   // Abertura da logo (cerca de 3 s): o nó é desenhado ao longo do próprio percurso, com as
@@ -867,23 +1073,40 @@
     gsap.to('.hero__no', { rotation: 30, scale: 1.08, ease: 'none', scrollTrigger: rolagemHero() });
     gsap.to('.hero__miolo', { yPercent: -10, ease: 'none', scrollTrigger: rolagemHero() });
 
-    // O problema: a frase entra palavra a palavra; as miniaturas saltam; o feed passa de lado.
+    // O problema: a frase se acende palavra a palavra conforme a rolagem (do apagado à tinta),
+    // as miniaturas saltam como figurinhas e o feed passa de lado, inclinando com a velocidade
+    // da rolagem; cada post brega chega com a etiqueta do seu erro.
     const declaracao = $('[data-declaracao]');
     if (declaracao) {
       if (typeof window.SplitText !== 'undefined') {
         const palavras = SplitText.create(declaracao, { type: 'words', wordsClass: 'palavra' });
-        gsap.from(palavras.words, { opacity: 0, y: 14, duration: 0.7, ease: 'power3.out', stagger: 0.028, scrollTrigger: { trigger: declaracao, start: 'top 80%', once: true } });
+        gsap.fromTo(palavras.words, { opacity: 0.14 }, {
+          opacity: 1, ease: 'none', stagger: 0.1,
+          scrollTrigger: { trigger: declaracao, start: 'top 85%', end: 'bottom 50%', scrub: true }
+        });
       } else revelar(declaracao);
-      gsap.from('.miniatura', { scale: 0.6, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.14, delay: 0.45, scrollTrigger: { trigger: declaracao, start: 'top 80%', once: true } });
+      gsap.from('.miniatura', {
+        scale: 0, rotation: -14, duration: 0.9, ease: 'back.out(2.4)', stagger: 0.16,
+        scrollTrigger: { trigger: declaracao, start: 'top 62%', once: true }
+      });
     }
     const trilho = $('[data-feed-trilho]');
     if (trilho) {
-      revelar('.feed__post', '.feed', { y: 48, duration: 1, stagger: 0.09, inicio: 'top 88%' });
+      revelar('.feed__post', '.feed', { y: 60, rotation: 2, duration: 1.1, stagger: 0.09, ease: 'expo.out', inicio: 'top 88%' });
+      gsap.from('.feed__erro', {
+        scale: 0, rotation: -10, transformOrigin: '0% 100%', duration: 0.7, ease: 'back.out(2.2)', stagger: 0.12, delay: 0.5,
+        scrollTrigger: { trigger: '.feed', start: 'top 78%', once: true }
+      });
+      const inclina = gsap.quickTo(trilho, 'skewX', { duration: 0.6, ease: 'power3' });
       gsap.fromTo(trilho, { x: 60 }, {
         x: () => -(Math.max(0, trilho.scrollWidth - window.innerWidth) + 60),
         ease: 'none',
-        scrollTrigger: { trigger: '.feed', start: 'top bottom', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true }
+        scrollTrigger: {
+          trigger: '.feed', start: 'top bottom', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true,
+          onUpdate: (self) => inclina(gsap.utils.clamp(-6, 6, self.getVelocity() / -300))
+        }
       });
+      ScrollTrigger.addEventListener('scrollEnd', () => inclina(0));
       revelar('.problema__nota', '.problema__nota');
     }
 
@@ -893,31 +1116,45 @@
     linhas($('.prova__titulo'), '.prova', { atraso: 0.25 });
     revelar(['.prova__meio p', '.prova__acoes .celula'], '.prova', { delay: 0.45 });
 
-    // Como funciona: título em linhas; os painéis sobem um a um.
+    // Como funciona: o título sobe em linhas e o texto aparece (o fio e as estações ficam em
+    // iniciarJornada).
     linhas($('#jornada-titulo'), '.jornada');
-    revelar('.jornada__texto', '.jornada', { delay: 0.15 });
-    revelar('.etapa', '.etapas', { y: desktop ? 70 : 30, stagger: 0.07, duration: 1, inicio: 'top 86%' });
+    revelar(['.jornada__texto', '.jornada__dica'], '.jornada', { delay: 0.15 });
   }
 
   function movimentoDepoisDaJornada() {
-    // As trilhas: cabeçalho, depois cada prato com a foto em cortina e o expoente que sobe.
+    const desktop = window.matchMedia('(min-width: 56.25em)').matches;
+
+    // As trilhas: cabeçalho em linhas; em cada trilha, o fio de cima se desenha, a foto abre em
+    // cortina, o número dourado salta e o texto sobe. Com mouse, a foto flutua junto ao cursor.
     linhas($('#trilhas-titulo'), '.trilhas');
     revelar('.trilhas__conta', '.trilhas', { delay: 0.2 });
     $$('.prato').forEach((prato) => {
-      cortina($('.prato__foto img', prato), prato, { duration: 0.9, inicio: 'top 88%' });
-      gsap.from($('.prato__expoente', prato), { x: -10, y: 10, scale: 0.4, opacity: 0, duration: 0.9, ease: 'expo.out', delay: 0.35, scrollTrigger: { trigger: prato, start: 'top 88%', once: true } });
-      revelar($$('.prato__texto > *', prato), prato, { y: 18, delay: 0.1, inicio: 'top 88%' });
+      const quando = { trigger: prato, start: 'top 90%', once: true };
+      gsap.from($('.prato__fio', prato), { scaleX: 0, duration: 1.3, ease: 'expo.inOut', scrollTrigger: quando });
+      cortina($('.prato__foto img', prato), prato, { duration: 0.9, inicio: 'top 90%' });
+      gsap.from($('.prato__expoente', prato), { scale: 0, rotation: -20, duration: 0.8, ease: 'back.out(2.4)', delay: 0.35, scrollTrigger: quando });
+      revelar($$('.prato__texto > *', prato), prato, { y: 18, delay: 0.12, inicio: 'top 90%' });
     });
+    previaTrilhas();
 
-    // Ferramentas: cada nome sobe da sua máscara; o papel aparece logo depois.
-    $$('.cartaz__linha').forEach((linha) => {
-      linhas($('.cartaz__nome', linha), linha, { inicio: 'top 90%' });
+    // Ferramentas: os nomes gigantes chegam deslizando de lados alternados, presos à rolagem;
+    // o papel de cada ferramenta aparece logo depois (o hover enche o nome de sálvia, no CSS).
+    $$('.cartaz__linha').forEach((linha, i) => {
+      const nome = $('.cartaz__nome', linha);
+      if (linha.classList.contains('cartaz__linha--titulo')) { linhas(nome, linha, { inicio: 'top 90%' }); return; }
+      gsap.fromTo(nome, { xPercent: i % 2 ? 14 : -14, opacity: 0.2 }, {
+        xPercent: 0, opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: linha, start: 'top bottom', end: 'top 55%', scrub: 0.6 }
+      });
       const papel = $('.cartaz__papel', linha);
-      if (papel) revelar(papel, linha, { delay: 0.25, inicio: 'top 90%' });
+      if (papel) revelar(papel, linha, { delay: 0.2, inicio: 'top 80%' });
     });
     revelar('.ferramentas__nota', '.ferramentas__nota');
 
-    // Sempre atualizada: o painel se abre até as bordas; as palavras do título se acendem com a rolagem.
+    // Sempre atualizada: o painel se abre até as bordas; as palavras do título se acendem com a
+    // rolagem; a foto chega como peça da vitrine, inclina com o mouse e a etiqueta conta as
+    // versões (1.0, 1.1, 1.2...) conforme o painel passa: a trilha se atualiza enquanto você lê.
     const painel = $('.sempre__painel');
     if (painel) {
       gsap.fromTo(painel, { clipPath: 'inset(7% 5% 7% 5%)' }, {
@@ -932,36 +1169,86 @@
           scrollTrigger: { trigger: painel, start: 'top 72%', end: 'top 12%', scrub: true }
         });
       }
-      cortina('.sempre__foto .recorte-expoente', '.sempre__foto', { inicio: 'top 92%' });
-      gsap.fromTo('.sempre__foto img', { scale: 1.15 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.sempre__foto', start: 'top bottom', end: 'bottom top', scrub: true } });
+      const peca = $('.sempre__peca');
+      if (peca) {
+        gsap.from(peca, { y: 140, rotation: -14, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.sempre__foto', start: 'top 92%', once: true } });
+        gsap.from('.sempre__etiqueta', { scale: 0, transformOrigin: '0% 100%', duration: 0.7, ease: 'back.out(2.2)', delay: 0.7, scrollTrigger: { trigger: '.sempre__foto', start: 'top 92%', once: true } });
+        gsap.fromTo('.sempre__peca img', { scale: 1.15 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.sempre__foto', start: 'top bottom', end: 'bottom top', scrub: true } });
+        inclinar(peca, 7);
+      }
+      const versao = $('[data-versao]');
+      if (versao) {
+        const versoes = ['1.0', '1.1', '1.2', '1.3', '2.0', '2.1'];
+        let atual = 0;
+        ScrollTrigger.create({
+          trigger: painel, start: 'top 60%', end: 'bottom 40%',
+          onUpdate: (self) => {
+            const i = Math.min(versoes.length - 1, Math.floor(self.progress * versoes.length));
+            if (i === atual) return;
+            atual = i;
+            gsap.timeline()
+              .to(versao, { yPercent: -60, opacity: 0, duration: 0.15, ease: 'power2.in' })
+              .add(() => { versao.textContent = versoes[i]; })
+              .fromTo(versao, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.3, ease: 'power3.out' });
+          }
+        });
+      }
       revelar('.sempre__blocos > *', '.sempre__blocos', { stagger: 0.1 });
     }
 
-    // Planos: os degraus crescem da linha de base, um depois do outro.
+    // Planos: os degraus sobem da linha de base com mola, um depois do outro; o preço conta até
+    // o valor; o selo do recomendado salta; com mouse, cada degrau inclina e acende um brilho.
     linhas($('#planos-titulo'), '.planos');
     revelar('.planos__condicao', '.planos', { delay: 0.2 });
-    cortina('.degrau', '.degraus', { stagger: 0.14, duration: 1.2 });
+    gsap.from('.degrau', {
+      y: 120, opacity: 0, rotationX: desktop ? 18 : 0, transformPerspective: 1000, transformOrigin: '50% 100%',
+      duration: 1.3, ease: 'expo.out', stagger: 0.14,
+      scrollTrigger: { trigger: '.degraus', start: 'top 82%', once: true }
+    });
+    gsap.from('.degrau__selo', { scale: 0, rotation: -12, transformOrigin: '0% 100%', duration: 0.7, ease: 'back.out(2.4)', delay: 0.9, scrollTrigger: { trigger: '.degraus', start: 'top 82%', once: true } });
+    $$('[data-contar]').forEach((el) => contar(el, '.degraus'));
+    $$('.degrau').forEach((degrau) => { inclinar(degrau, 4); brilhoCursor(degrau); });
     revelar('.planos__nota', '.planos__nota');
 
-    // Equipe: retratos abrem em cortina; nomes entram em seguida.
+    // Equipe: os retratos sobem com leve giro, as iniciais rolam para dentro do bloco e os nomes
+    // entram em seguida (o hover levanta o retrato e mostra o nó girando, no CSS).
     linhas($('#equipe-titulo'), '.equipe');
-    cortina('.pessoa__retrato', '.equipe__grade', { stagger: 0.07 });
-    revelar('.pessoa__nome, .pessoa__funcao', '.equipe__grade', { y: 12, delay: 0.3, stagger: 0.04 });
+    gsap.fromTo('.pessoa', { y: 80, rotation: (i) => (i % 2 ? 3 : -3), opacity: 0 }, {
+      y: 0, rotation: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: 0.08,
+      scrollTrigger: { trigger: '.equipe__grade', start: 'top 85%', once: true }
+    });
+    gsap.from('.pessoa__iniciais', {
+      yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.08, delay: 0.35,
+      scrollTrigger: { trigger: '.equipe__grade', start: 'top 85%', once: true }
+    });
+    revelar('.pessoa__nome, .pessoa__funcao', '.equipe__grade', { y: 12, delay: 0.5, stagger: 0.04 });
 
-    // No hackathon: os blocos entram; o bloco dourado (agora) se preenche por último.
+    // No hackathon: os blocos entram; a linha do tempo se desenha até a etapa atual e o ponto
+    // dourado viaja até ela e fica pulsando; o bloco "agora" se preenche de dourado.
     linhas($('#hackathon-titulo'), '.quadro');
     revelar(['.quadro__bloco--titulo', '.quadro__bloco--texto'], '.quadro', { stagger: 0.1 });
-    revelar('.quadro__etapa:not(.quadro__etapa--atual)', '.quadro__etapas', { stagger: 0.1, delay: 0.1 });
+    revelar('.quadro__etapa:not(.quadro__etapa--atual)', '.quadro__etapas', { y: 40, stagger: 0.1, delay: 0.1, ease: 'expo.out' });
+    gsap.fromTo('.quadro__etapas', { '--linha': 0, '--ponto': 0 }, {
+      '--linha': 0.375, '--ponto': 0.375, duration: 1.6, ease: 'expo.inOut', delay: 0.3,
+      scrollTrigger: { trigger: '.quadro__etapas', start: 'top 84%', once: true }
+    });
     gsap.fromTo('.quadro__etapa--atual', { clipPath: 'inset(0% 100% 0% 0%)' }, {
-      clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut', delay: 0.45, clearProps: 'clipPath',
+      clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut', delay: 0.9, clearProps: 'clipPath',
       scrollTrigger: { trigger: '.quadro__etapas', start: 'top 84%', once: true }
     });
 
-    // Lista de espera: o cupom sobe; o expoente do canhoto se eleva.
-    revelar('.cupom', '.lista', { y: 50, duration: 1.1 });
-    linhas($('#lista-titulo'), '.cupom', { atraso: 0.2 });
-    gsap.from('.cupom__expoente', { x: -14, y: 14, scale: 0.4, opacity: 0, duration: 1, ease: 'expo.out', delay: 0.6, scrollTrigger: { trigger: '.cupom', start: 'top 84%', once: true } });
-    revelar('.cupom__form > .campo, .cupom__enviar', '.cupom', { y: 16, delay: 0.3, stagger: 0.06 });
+    // Lista de espera: o cupom chega virando em 3D, como um ingresso sendo entregue, e depois
+    // inclina com o mouse (menos enquanto alguém digita); o título sobe em linhas e os campos
+    // aparecem em ordem.
+    gsap.from('.cupom', {
+      y: 140, rotationX: 32, opacity: 0, transformPerspective: 1400, transformOrigin: '50% 100%',
+      duration: 1.5, ease: 'expo.out',
+      scrollTrigger: { trigger: '.lista', start: 'top 72%', once: true }
+    });
+    linhas($('#lista-titulo'), '.cupom', { atraso: 0.35 });
+    gsap.from('.cupom__expoente', { scale: 0, rotation: -20, duration: 0.8, ease: 'back.out(2.4)', delay: 0.9, scrollTrigger: { trigger: '.cupom', start: 'top 84%', once: true } });
+    revelar('.cupom__form > .campo, .cupom__enviar', '.cupom', { y: 16, delay: 0.5, stagger: 0.06 });
+    inclinar($('.cupom'), 3);
 
     // Rodapé: a frase entra em linhas; a marca cresce em blocos e o expoente sobe por último.
     linhas($('.rodape__frase'), '.rodape__fecho');
@@ -1011,6 +1298,7 @@
     iniciarMenu();
     iniciarImagensSvg();
     montarFundoHero();
+    montarFundosNo();
     iniciarVideoHero();
     if (comMovimento()) {
       aberturaLogo(entradaHero);

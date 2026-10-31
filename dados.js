@@ -147,11 +147,11 @@ window.POTENCIA_DADOS = {
      Vazio = mostra as iniciais no lugar da foto.
      ------------------------------------------------------------------------ */
   equipe: [
-    { nome: 'Ana Ribeiro', funcao: 'Produto e estratégia', foto: '' },
-    { nome: 'Bruno Carvalho', funcao: 'Tecnologia', foto: '' },
-    { nome: 'Camila Nunes', funcao: 'Design e direção de arte', foto: '' },
-    { nome: 'Diego Martins', funcao: 'Vídeo e motion', foto: '' },
-    { nome: 'Fernanda Lopes', funcao: 'Conteúdo e didática', foto: '' },
-    { nome: 'Rafael Souza', funcao: 'Negócios e parcerias', foto: '' }
+    { nome: 'Luiz Amaro', funcao: 'Programação e marketing', foto: '' },
+    { nome: 'Pedro Kliemann', funcao: 'A definir', foto: '' },
+    { nome: 'Gabriel Henrique', funcao: 'A definir', foto: '' },
+    { nome: 'Lucas Andrade', funcao: 'A definir', foto: '' },
+    { nome: 'Samuel Salles', funcao: 'A definir', foto: '' },
+    { nome: 'Ramon Henrique', funcao: 'A definir', foto: '' }
   ]
 };

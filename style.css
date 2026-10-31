@@ -413,9 +413,10 @@ p, li, figcaption { text-wrap: pretty; }
 }
 .miniatura svg { width: 100%; height: 100%; }
 
-.feed { margin-top: clamp(3.5rem, 10svh, 6rem); overflow: clip; }
+.feed { margin-top: clamp(2.5rem, 8svh, 5rem); padding-top: 1.25rem; overflow: clip; }
 .feed__trilho { display: flex; gap: var(--calha); width: max-content; padding: 0 var(--margem); }
-.feed__post { flex: none; width: clamp(13.5rem, 21vw, 21rem); }
+.feed__post { position: relative; flex: none; width: clamp(13.5rem, 21vw, 21rem); }
+.feed__erro { position: absolute; left: -0.4rem; top: -0.9rem; z-index: 1; }
 .post-svg { width: 100%; height: auto; aspect-ratio: 4 / 5; background: var(--pedra); }
 .problema__nota { margin: 1.75rem var(--margem) 0; max-width: 62ch; font-size: var(--passo-pequeno); color: var(--suave); }
 
@@ -538,82 +539,190 @@ html:not(.js) .abas { display: none; }
 }
 
 /* --------------------------------------------------------------------------
-   8. Como funciona (acordeão de painéis)
+   8. Como funciona: "o fio da jornada". Base: linha do tempo vertical (celular,
+   movimento reduzido, sem JavaScript). No computador, com movimento, o main.js
+   liga .is-horizontal: a seção fica presa, a rolagem vira um percurso horizontal
+   e uma fita sálvia se desenha de estação em estação. Cada estação mostra o
+   artefato que você tem ao terminar a etapa. Os artefatos ficam, por padrão,
+   no estado final; o main.js só os "rebobina" quando vai animar.
    -------------------------------------------------------------------------- */
 .jornada { padding: var(--secao) var(--margem); }
-.jornada__intro { display: grid; gap: 1.25rem; margin-bottom: 2.5rem; }
+.jornada__palco { position: relative; }
+.jornada__trilho { position: relative; display: grid; gap: 3.5rem; padding-left: 2.25rem; }
+.jornada__intro { display: grid; gap: 1.25rem; align-content: start; }
 .jornada__texto { max-width: 40ch; }
-.etapas { display: grid; }
-.etapa { background: var(--tom); color: var(--tinta); --foco: var(--ouro); }
-.etapa__cabeca { font-size: inherit; font-weight: inherit; }
-.etapa__botao {
-  width: 100%; min-height: 4rem;
-  padding: 0 1.25rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  font-size: var(--passo-corpo); font-weight: 600; text-align: left;
+.jornada__dica { display: none; }
+.jornada__fio { display: none; }
+.jornada__fio-vertical {
+  position: absolute; left: 0.45rem; top: 0.5rem; bottom: 0; width: 2px;
+  background: color-mix(in srgb, var(--salvia) 25%, transparent);
 }
-/* O marcador da etapa é o próprio motivo: um quadradinho que fica dourado quando aberto */
-.etapa__botao::after {
-  content: ''; flex: none;
-  width: 0.7rem; height: 0.7rem;
-  background: currentColor; opacity: 0.35;
-  transition: background-color var(--t-ui) ease, opacity var(--t-ui) ease, transform var(--t-ui) var(--ease-out);
-}
-.etapa.is-aberta .etapa__botao::after { background: var(--ouro); opacity: 1; transform: translate(2px, -6px); }
-.etapa__painel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 480ms var(--ease-out); }
-.etapa.is-aberta .etapa__painel { grid-template-rows: 1fr; }
-.etapa__miolo { overflow: hidden; min-height: 0; }
-.etapa__texto { padding: 0 1.25rem 1.25rem; }
-.etapa__texto p { max-width: 36ch; }
-.etapa__titulo { display: none; }
-.etapa__foto { padding: 0 1.25rem 1.5rem; }
-.etapa__foto img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
-.reel { position: relative; width: min(100%, 17rem); aspect-ratio: 9 / 16; background: #000; overflow: hidden; }
-.reel video { width: 100%; height: 100%; object-fit: cover; }
-.reel__legenda {
-  position: absolute; left: 6%; right: 6%; bottom: 11%;
-  display: flex; flex-direction: column; align-items: center; gap: 0.15em;
-  font-size: var(--passo-ui); font-weight: 600; line-height: 1.25; text-align: center;
-}
-.reel__legenda span { padding: 0.08em 0.4em; background: rgba(0, 0, 0, 0.72); color: #fff; white-space: nowrap; }
-.etapa__foto figcaption { margin-top: 0.75rem; max-width: 34ch; font-size: var(--passo-pequeno); }
+.jornada__fio-vertical i { position: absolute; inset: 0; background: var(--salvia); transform-origin: top center; }
+.jornada__progresso { display: none; }
 
-/* Sem JavaScript: todas as etapas abertas */
-html:not(.js) .etapa__painel { grid-template-rows: 1fr; }
+.estacoes { display: grid; gap: 5rem; }
+.estacao { position: relative; display: grid; gap: 2.25rem; }
+.estacao__marca {
+  position: absolute; left: calc(-2.25rem + 0.45rem + 1px); top: 0.6rem;
+  width: 0.9rem; height: 0.9rem; translate: -50% 0;
+  background: var(--salvia); border: 2px solid var(--salvia);
+  transition: background-color 400ms ease, border-color 400ms ease, scale 500ms var(--ease-out);
+}
+.estacao__numero {
+  display: block;
+  font-size: clamp(3.75rem, 15vw, 8rem); font-weight: 600; line-height: 0.82; letter-spacing: -0.045em;
+  color: var(--salvia);
+  -webkit-text-stroke: 1.5px var(--salvia);
+  transition: color 700ms ease;
+}
+.estacao__titulo { margin-top: 1.1rem; font-size: var(--passo-declaracao); font-weight: 600; letter-spacing: -0.02em; line-height: 1.08; }
+.estacao__texto p { margin-top: 0.8rem; max-width: 36ch; color: var(--suave); }
+/* Com movimento, a estação começa "apagada" (número só no contorno) e acende quando o fio chega */
+.movimento .estacao:not(.is-ativa) .estacao__marca { background: var(--papel); }
+.movimento .estacao:not(.is-ativa) .estacao__numero { color: transparent; }
+.estacao.is-ativa .estacao__marca { background: var(--ouro); border-color: var(--ouro); scale: 1.3; }
 
+/* ---------- Artefatos ---------- */
+.artefato { position: relative; width: min(100%, 24rem); }
+.artefato__etiqueta { position: absolute; left: -0.5rem; top: -0.95rem; z-index: 3; }
+.artefato__janela {
+  background: var(--preto); color: var(--papel);
+  padding: 1.1rem 1.1rem 1.25rem;
+  box-shadow: 0 2rem 3.5rem -1.5rem rgba(23, 30, 25, 0.55), 0 0 0 1px rgba(23, 30, 25, 0.06);
+}
+.artefato__barra { display: flex; align-items: center; gap: 0.35rem; margin-bottom: 1rem; font-size: 0.75rem; color: var(--cinza-claro); }
+.artefato__barra i { width: 0.55rem; height: 0.55rem; background: var(--carvao); }
+.artefato__barra b { margin-left: 0.45rem; font-weight: 600; }
+
+/* 1. Conversa com o Claude e checklist */
+.msg { width: fit-content; max-width: 86%; padding: 0.6rem 0.8rem; font-size: 0.875rem; line-height: 1.4; }
+.msg--voce { margin-left: auto; background: var(--salvia); color: var(--preto); }
+.msg--claude { margin-top: 0.5rem; background: var(--carvao); min-height: 2.6rem; }
+.checklist { margin-top: 1.1rem; display: grid; gap: 0.5rem; font-size: 0.8125rem; color: var(--papel); }
+.checklist li { display: flex; align-items: center; gap: 0.6rem; transition: color 300ms ease; }
+.checklist li::before {
+  content: ''; flex: none; width: 0.8rem; height: 0.8rem;
+  background: var(--ouro); border: 1.5px solid var(--ouro);
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+.checklist li.is-pendente { color: var(--cinza-claro); }
+.checklist li.is-pendente::before { background: transparent; border-color: var(--salvia); }
+
+/* 2. Calendário de conteúdo */
+.artefato__folha {
+  background: #FFFDF8; color: var(--texto); padding: 1.1rem;
+  box-shadow: 0 2rem 3.5rem -1.5rem rgba(23, 30, 25, 0.45), 0 0 0 1px rgba(23, 30, 25, 0.06);
+}
+.calendario__mes { margin-bottom: 0.8rem; font-size: 0.95rem; font-weight: 600; }
+.calendario__mes span { font-weight: 500; color: var(--cinza-escuro); }
+.calendario__semana, .calendario__dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; }
+.calendario__semana { margin-bottom: 0.3rem; }
+.calendario__semana span { font-size: 0.625rem; font-weight: 600; text-align: center; color: var(--cinza-escuro); }
+.calendario__dias span { position: relative; aspect-ratio: 1; padding: 0.2rem 0.25rem; font-size: 0.625rem; color: var(--cinza-escuro); background: #F1EBDE; }
+.calendario__dias i {
+  position: absolute; left: 0.15rem; right: 0.15rem; bottom: 0.15rem;
+  padding: 0.12rem 0.15rem; overflow: hidden; white-space: nowrap;
+  font-style: normal; font-size: 0.5rem; font-weight: 600; line-height: 1.2;
+}
+[data-dia="reel"] i { background: var(--salvia); color: var(--preto); }
+[data-dia="carrossel"] i { background: var(--ouro); color: var(--preto); }
+[data-dia="post"] i { background: var(--preto); color: var(--papel); }
+
+/* 3. Reel no celular e a linha de edição */
+.artefato--reel { width: min(100%, 15rem); }
+.artefato__celular {
+  position: relative; aspect-ratio: 9 / 16; overflow: hidden;
+  background: #0C100D; border: 6px solid #0C100D;
+  box-shadow: 0 2rem 3.5rem -1.5rem rgba(23, 30, 25, 0.55);
+}
+.artefato__celular video { width: 100%; height: 100%; object-fit: cover; }
+.linha-edicao { position: relative; display: flex; gap: 3px; height: 1.6rem; margin-top: 0.7rem; }
+.linha-edicao i { flex: 1; background: var(--salvia); }
+.linha-edicao i:nth-child(2) { flex: 1.6; background: var(--ouro); }
+.linha-edicao i:nth-child(3) { flex: 0.8; background: var(--carvao); }
+.linha-edicao b { position: absolute; top: -0.3rem; bottom: -0.3rem; left: 42%; width: 2px; background: var(--texto); }
+
+/* 4. Locução: onda sonora */
+.voz__topo { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; font-weight: 600; }
+.voz__topo span { font-weight: 500; color: var(--cinza-claro); }
+.voz__play { position: relative; flex: none; width: 2.25rem; height: 2.25rem; background: var(--ouro); }
+.voz__play::after { content: ''; position: absolute; inset: 30% 26% 30% 36%; background: var(--preto); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.voz__onda { display: flex; align-items: center; gap: 3px; height: 4.5rem; margin: 1.1rem 0 0.9rem; }
+.voz__onda i { flex: 1; height: calc(var(--h) * 100%); background: var(--salvia); transform-origin: center; }
+.voz__onda i:nth-child(-n + 14) { background: var(--ouro); }
+.voz__texto { font-size: 0.8125rem; line-height: 1.45; color: var(--cinza-claro); }
+
+/* 5. Post publicado */
+.artefato--post { width: min(100%, 16.5rem); }
+.artefato__celular--claro { aspect-ratio: auto; background: #FFFFFF; color: #1A1A1A; padding-bottom: 0.8rem; }
+.post__perfil { display: flex; align-items: center; gap: 0.45rem; padding: 0.55rem 0.6rem; font-size: 0.6875rem; }
+.post__perfil i { width: 1.4rem; height: 1.4rem; border-radius: 50%; background: linear-gradient(135deg, var(--ouro), var(--salvia)); }
+.artefato__celular--claro img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.post__acoes { display: flex; gap: 0.5rem; padding: 0.6rem 0.6rem 0.35rem; }
+.post__acoes i { width: 1rem; height: 1rem; border: 1.5px solid #1A1A1A; border-radius: 50%; }
+.post__legenda { padding: 0 0.6rem; font-size: 0.6875rem; line-height: 1.35; }
+.post__aviso {
+  position: absolute; z-index: 3; right: -1.25rem; top: 3.25rem;
+  display: grid; gap: 0.1rem; padding: 0.6rem 0.85rem;
+  background: var(--preto); color: var(--cinza-claro); font-size: 0.75rem;
+  box-shadow: 0 1rem 2rem -0.75rem rgba(0, 0, 0, 0.5);
+}
+.post__aviso b { color: var(--ouro); font-weight: 600; }
+
+/* 6. Venda: conversa no WhatsApp e gráfico */
+.artefato__janela--zap { display: grid; gap: 0.45rem; background: #E9E2D3; color: var(--texto); }
+.zap { width: fit-content; max-width: 84%; padding: 0.5rem 0.7rem; font-size: 0.8125rem; line-height: 1.35; background: #FFFFFF; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08); }
+.zap--loja { margin-left: auto; background: #D5E5CF; }
+.grafico { margin-top: 0.9rem; padding: 0.9rem 1rem 1rem; background: var(--preto); color: var(--papel); box-shadow: 0 2rem 3.5rem -1.5rem rgba(23, 30, 25, 0.55); }
+.grafico p { font-size: 0.75rem; font-weight: 600; }
+.grafico p span { font-weight: 500; color: var(--cinza-claro); }
+.grafico__barras { display: flex; align-items: flex-end; gap: 0.4rem; height: 4.5rem; margin-top: 0.7rem; }
+.grafico__barras i { flex: 1; height: calc(var(--v) * 100%); background: var(--salvia); transform-origin: bottom center; }
+.grafico__barras i:last-child { background: var(--ouro); }
+
+/* Computador sem o trilho (movimento reduzido): texto e artefato lado a lado */
 @media (min-width: 56.25em) {
-  .jornada__intro { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--calha); align-items: end; margin-bottom: 4rem; }
-  .jornada__intro .titulo-secao { grid-column: 1 / span 5; }
-  .jornada__texto { grid-column: 7 / span 5; font-size: var(--passo-corpo); }
-
-  .js .etapas { display: flex; height: clamp(26rem, 70svh, 40rem); container-type: inline-size; }
-  .js .etapa { position: relative; flex: 1 1 0; min-width: 0; overflow: hidden; transition: flex-grow 650ms var(--ease-in-out); }
-  .js .etapa.is-aberta { flex-grow: 6.9; }
-  .js .etapa__cabeca { position: absolute; inset: 0; z-index: 1; }
-  .js .etapa__botao {
-    position: absolute; inset: 0; min-height: 0;
-    padding: 1.5rem 1.15rem;
-    flex-direction: column-reverse; align-items: flex-start; justify-content: space-between;
-    transition: opacity 300ms ease;
-  }
-  .js .etapa__botao::after { transform: none; }
-  .js .etapa__nome { writing-mode: vertical-rl; transform: rotate(180deg); font-size: var(--passo-destaque); white-space: nowrap; }
-  .js .etapa.is-aberta .etapa__botao { opacity: 0; pointer-events: none; }
-  .js .etapa__painel { position: absolute; inset: 0; display: block; opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
-  .js .etapa.is-aberta .etapa__painel { opacity: 1; pointer-events: auto; transition: opacity 500ms ease 260ms; }
-  .js .etapa__miolo { width: 58cqw; height: 100%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr); overflow: visible; }
-  .js .etapa:not(.is-aberta) .etapa__miolo { width: 100%; }
-  .js .etapa:not(.is-aberta) .reel { width: 100%; height: auto; }
-  .js .etapa__texto { display: flex; flex-direction: column; justify-content: space-between; padding: 2rem 2rem 2.25rem; }
-  .js .etapa__titulo { display: block; position: relative; width: fit-content; font-size: var(--passo-declaracao); font-weight: 600; letter-spacing: -0.02em; line-height: 1.06; }
-  .js .etapa__titulo::after { content: ''; position: absolute; width: 0.28em; height: 0.28em; left: calc(100% + 0.1em); top: -0.18em; background: var(--ouro); }
-  .js .etapa__texto p:not(.etapa__titulo) { font-size: var(--passo-corpo); }
-  .js .etapa__foto { height: 100%; min-height: 0; padding: 0; overflow: hidden; }
-  .js .etapa__foto img { height: 100%; aspect-ratio: auto; }
-  .js .etapa__foto--video { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.25rem; padding: 1.25rem; }
-  .js .reel { flex: none; height: calc(100% - 4rem); width: auto; max-width: 100%; }
-  .js .etapa__foto--video figcaption { text-align: center; }
+  .estacao { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; column-gap: 4rem; }
+  .artefato { justify-self: center; }
 }
+
+/* ---------- O trilho horizontal (computador, com movimento) ---------- */
+.jornada.is-horizontal { padding: 0; }
+.is-horizontal .jornada__palco { height: 100svh; overflow: hidden; }
+.is-horizontal .jornada__trilho {
+  display: flex; align-items: stretch; gap: 0;
+  width: max-content; height: 100%;
+  padding: 0 0 0 var(--margem);
+}
+.is-horizontal .jornada__fio-vertical { display: none; }
+.is-horizontal .jornada__fio { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.jornada__fio path { fill: none; }
+.jornada__fio [data-fio-fundo] { stroke: color-mix(in srgb, var(--salvia) 28%, transparent); stroke-width: 2; stroke-dasharray: 2 7; }
+.jornada__fio [data-fio] { stroke: var(--salvia); stroke-width: 3; }
+.is-horizontal .jornada__intro {
+  flex: none; width: min(36vw, 32rem); padding: calc(var(--cab-altura) + 2rem) 6vw 0 0;
+  align-self: center;
+}
+.is-horizontal .jornada__dica { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 0.75rem; font-weight: 600; color: var(--salvia); }
+.is-horizontal .jornada__dica span { display: inline-block; animation: dica-seta 1.6s var(--ease-in-out) infinite; }
+@keyframes dica-seta { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(0.5rem); } }
+.is-horizontal .estacoes { display: flex; gap: 0; height: 100%; }
+.is-horizontal .estacao {
+  flex: none; width: min(64vw, 60rem); height: 100%;
+  padding: calc(var(--cab-altura) + 15svh) 6vw 11svh 0;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-content: center; align-items: center;
+}
+/* As marcas ficam numa faixa só, por onde a fita passa */
+.is-horizontal .estacao__marca { left: 0; top: calc(var(--cab-altura) + 7svh); translate: -50% -50%; }
+.is-horizontal .estacao__numero { font-size: clamp(5rem, 8.5vw, 9rem); }
+.is-horizontal .jornada__progresso {
+  position: absolute; left: var(--margem); right: var(--margem); bottom: 4.5svh;
+  display: flex; align-items: center; gap: 1.25rem;
+}
+.jornada__contador { font-size: var(--passo-pequeno); font-weight: 600; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; color: var(--suave); }
+.jornada__barra { position: relative; flex: 1; height: 2px; background: color-mix(in srgb, var(--texto) 12%, transparent); }
+.jornada__barra i { position: absolute; inset: 0; background: var(--ouro); transform-origin: left center; transform: scaleX(0); }
 
 /* --------------------------------------------------------------------------
    9. As trilhas (cardápio em duas colunas)
@@ -697,7 +806,7 @@ html:not(.js) .etapa__painel { grid-template-rows: 1fr; }
    -------------------------------------------------------------------------- */
 .sempre { padding: var(--secao) 0.625rem; }
 .sempre__painel {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; isolation: isolate;
   display: grid; gap: 2.25rem;
   padding: 2.75rem 1.25rem 0;
   background: var(--preto); color: var(--papel);
@@ -709,14 +818,16 @@ html:not(.js) .etapa__painel { grid-template-rows: 1fr; }
 .sempre__bloco p { max-width: 40ch; color: var(--cinza-claro); }
 .sempre__blocos .botao { justify-self: start; }
 .sempre__foto { order: 3; width: 68%; margin: 18% 0 -18%; }
-.recorte-expoente { position: relative; aspect-ratio: 1; background: var(--carvao); }
-.recorte-expoente img { width: 100%; height: 100%; object-fit: cover; }
-.recorte-expoente::after {
-  content: ''; position: absolute;
-  width: 22%; aspect-ratio: 1;
-  left: calc(100% + 3%); bottom: calc(100% + 3%);
-  background: var(--ouro);
+/* A foto vira uma peça da vitrine: levemente girada, com sombra e a etiqueta da versão */
+.sempre__peca {
+  position: relative; aspect-ratio: 1;
+  background: var(--carvao);
+  transform: rotate(-3deg);
+  box-shadow: 0 2.5rem 4rem -1.75rem rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(246, 241, 231, 0.06);
 }
+.sempre__peca img { width: 100%; height: 100%; object-fit: cover; }
+.sempre__etiqueta { position: absolute; left: -0.5rem; top: -0.95rem; }
+.sempre__etiqueta b { display: inline-block; min-width: 2.1em; font-weight: 600; color: var(--texto); font-variant-numeric: tabular-nums; }
 @media (min-width: 64em) {
   .sempre { padding-inline: 1.25rem; }
   .sempre__painel {
@@ -905,9 +1016,9 @@ select.campo__entrada {
 .cupom__sucesso:focus { outline: none; }
 .cupom__sucesso-titulo { font-size: var(--passo-declaracao); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; max-width: 18ch; }
 .cupom__sucesso p { max-width: 36ch; }
-.cupom__sucesso-simbolo { position: relative; width: 3.25rem; height: 3.25rem; margin-bottom: 0.5rem; }
-.cupom__sucesso-simbolo span:first-child { position: absolute; left: 0; bottom: 0; width: 68%; height: 68%; background: var(--preto); }
-.cupom__sucesso-simbolo span:last-child { position: absolute; right: 0; top: 0; width: 26%; height: 26%; background: var(--ouro); }
+.cupom__sucesso-simbolo { display: block; width: 4.75rem; height: 4.75rem; margin-bottom: 0.5rem; color: #4F6E55; }
+.cupom__sucesso-simbolo svg { width: 100%; height: 100%; overflow: visible; }
+.cupom__sucesso-simbolo path { stroke-width: 15; }
 
 @media (min-width: 64em) {
   .cupom { grid-template-columns: 46fr 54fr; width: min(100%, 72rem); min-height: 33rem; margin: 0 auto; }
@@ -989,6 +1100,116 @@ select.campo__entrada {
 }
 
 /* --------------------------------------------------------------------------
+   16b. Linguagem comum com a hero: etiquetas com o quadradinho dourado, o nó
+   em fio ao fundo, brilho que segue o mouse, linha do tempo e efeitos de hover.
+   As animações em si ficam no main.js (só com movimento).
+   -------------------------------------------------------------------------- */
+/* Etiqueta: rótulo da peça (igual às da vitrine da hero) */
+.etiqueta {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.32rem 0.6rem 0.32rem 0.5rem;
+  background: var(--papel); color: var(--texto);
+  font-size: 0.75rem; font-weight: 600; line-height: 1.1; white-space: nowrap;
+  box-shadow: 0 0.6rem 1.2rem -0.5rem rgba(0, 0, 0, 0.45);
+}
+.etiqueta::before { content: ''; flex: none; width: 0.45rem; height: 0.45rem; background: var(--ouro); }
+.etiqueta span { font-weight: 500; color: var(--cinza-escuro); }
+.etiqueta--erro::before { background: var(--erro); }
+
+/* O nó em fio ao fundo de algumas seções (cópia do nó da abertura, feita pelo main.js) */
+.trilhas, .lista { isolation: isolate; overflow: clip; }
+.fundo-no { position: absolute; z-index: -1; aspect-ratio: 1; pointer-events: none; color: var(--salvia); opacity: 0.3; }
+.fundo-no svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.fundo-no path { vector-effect: non-scaling-stroke; stroke-width: 1px; }
+.fundo-no--trilhas { width: min(90vw, 60rem); right: -30vw; top: -6rem; }
+.fundo-no--sempre { width: min(80vw, 46rem); right: -22%; bottom: -34%; opacity: 0.26; }
+.fundo-no--lista { --no: min(120vmin, 72rem); width: var(--no); left: calc(50% - var(--no) / 2); top: calc(50% - var(--no) / 2); opacity: 0.24; }
+.lista { background-image: radial-gradient(52% 48% at 50% 50%, rgba(107, 143, 113, 0.18), rgba(107, 143, 113, 0) 72%); }
+
+/* Trilhas: fio que se desenha acima de cada trilha; com mouse, as outras esmaecem
+   e a foto da trilha flutua junto ao cursor (.trilhas__previa, criada pelo main.js) */
+.prato { position: relative; transition: opacity var(--t-ui) ease; }
+.prato__fio {
+  position: absolute; left: 0; right: 0; top: -1.25rem; height: 1px;
+  background: color-mix(in srgb, var(--salvia) 55%, transparent);
+  transform-origin: left center;
+}
+@media (min-width: 56.25em) { .prato__fio { top: -1.5rem; } }
+@media (hover: hover) and (pointer: fine) {
+  .cardapio:hover .prato:not(:hover) { opacity: 0.4; }
+}
+.trilhas__previa {
+  position: fixed; left: 0; top: 0; z-index: 40;
+  width: clamp(14rem, 21vw, 19rem); aspect-ratio: 4 / 5;
+  pointer-events: none; opacity: 0; visibility: hidden;
+}
+.trilhas__previa img {
+  width: 100%; height: 100%; object-fit: cover;
+  box-shadow: 0 2.5rem 4rem -1.5rem rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(246, 241, 231, 0.08);
+}
+.trilhas__previa .etiqueta { position: absolute; left: -0.5rem; top: -0.95rem; }
+
+/* Ferramentas: o nome se enche de sálvia da esquerda para a direita no hover */
+.cartaz__linha:not(.cartaz__linha--titulo) .cartaz__nome {
+  background-image: linear-gradient(90deg, var(--salvia) 0 50%, currentColor 50% 100%);
+  background-size: 200% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: background-position 700ms var(--ease-out), color var(--t-hover) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cartaz__linha:hover .cartaz__nome { background-position: 0 0; }
+}
+
+/* Planos: selo no recomendado e brilho que segue o mouse */
+.degrau { position: relative; }
+.degrau__selo { position: absolute; top: -0.95rem; left: 1.25rem; z-index: 1; }
+.degrau[data-brilho]::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 62%);
+  opacity: 0; transition: opacity 320ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .degrau[data-brilho]:hover::before { opacity: 1; } }
+
+/* Equipe: o retrato sobe e um nó em fio aparece girando no canto */
+.pessoa__retrato { transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out); }
+.pessoa__iniciais { position: relative; z-index: 1; }
+.pessoa__no {
+  position: absolute; width: 82%; aspect-ratio: 1; right: -18%; top: -16%;
+  color: currentColor; opacity: 0;
+  transform: rotate(-35deg) scale(0.85);
+  transition: opacity 500ms ease, transform 1100ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pessoa:hover .pessoa__retrato { transform: translateY(-0.5rem); box-shadow: 0 1.5rem 2.5rem -1.25rem rgba(0, 0, 0, 0.35); }
+  .pessoa:hover .pessoa__no { opacity: 0.32; transform: rotate(0deg) scale(1); }
+}
+
+/* No hackathon: linha do tempo dourada até a etapa atual, com um ponto que pulsa */
+@media (min-width: 64em) {
+  .quadro__etapas { position: relative; --linha: 0.375; --ponto: 0.375; }
+  .quadro__etapas::before {
+    content: ''; position: absolute; left: 0; right: 0; top: -0.25rem; height: 2px; z-index: 1;
+    transform: translateY(-50%);
+    background:
+      linear-gradient(var(--ouro), var(--ouro)) 0 0 / calc(var(--linha) * 100%) 100% no-repeat,
+      rgba(246, 241, 231, 0.12);
+  }
+  .quadro__etapas::after {
+    content: ''; position: absolute; z-index: 2;
+    top: -0.25rem; left: calc(var(--ponto) * 100%);
+    width: 0.75rem; height: 0.75rem;
+    transform: translate(-50%, -50%);
+    background: var(--ouro);
+    animation: pulso 1.8s var(--ease-out) infinite;
+  }
+}
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 rgba(242, 183, 5, 0.55); }
+  100% { box-shadow: 0 0 0 0.9rem rgba(242, 183, 5, 0); }
+}
+
+/* --------------------------------------------------------------------------
    17. Estados iniciais da animação de entrada (só com .movimento)
    O JavaScript leva tudo ao estado final; se ele falhar, o script do <head>
    remove .movimento e o conteúdo aparece.
@@ -1038,15 +1259,14 @@ select.campo__entrada {
 .menu-aberto, .menu-aberto body { overflow: hidden; }
 /* Destinos de âncora recebem foco sem moldura (o foco visível fica nos controles) */
 [tabindex="-1"]:focus { outline: none; }
-/* Só o título da etapa aberta existe na tela do acordeão */
-.js .etapa:not(.is-aberta) .etapa__titulo { display: none; }
 
 /* --------------------------------------------------------------------------
    18. Movimento reduzido: sem deslocamentos, sem troca automática
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
-  .etapa, .etapa__painel, .etapa__botao,
-  .cabecalho, .slide, .marca__simbolo use { transition: none !important; }
+  .estacao__marca, .estacao__numero, .checklist li,
+  .cabecalho, .slide, .marca__simbolo use, .pessoa__retrato, .pessoa__no, .cartaz__nome, .prato { transition: none !important; }
+  .quadro__etapas::after { animation: none !important; }
   .menu-movel:not([hidden]) { animation: none; }
 }

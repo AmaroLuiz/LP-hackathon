@@ -165,8 +165,8 @@
        Abertura (3 s): o nó da logo é desenhado ao longo do próprio percurso,
        o nome aparece embaixo e a tela sobe revelando a página. Só existe com
        .movimento (JavaScript + animações); clique ou tecla pula. Cada trecho
-       traz sua posição no percurso (data-de/data-ate, de 0 a 1), gerada por
-       .claude/gerar-logo.mjs com TRECHOS=1.
+       traz sua posição no percurso (data-de/data-ate, de 0 a 1); o main.js usa
+       essas posições para desenhar o nó na abertura, no fundo da hero e nas seções.
        ====================================================================== -->
   <div class="abertura" aria-hidden="true" data-abertura>
     <div class="abertura__logo">
@@ -364,6 +364,7 @@
 
           <!-- Post poluído: pizzaria -->
           <figure class="feed__post">
+            <span class="etiqueta etiqueta--erro feed__erro" aria-hidden="true">Degradê arco-íris</span>
             <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de pizzaria: foto esticada e saturada, título com degradê arco-íris, selo de promoção, chamas desenhadas e três chamadas competindo">
               <rect width="1080" height="1350" fill="#120000"/>
               <image data-href="assets/pizza.webp" x="0" y="250" width="1080" height="760" preserveAspectRatio="none" filter="url(#f-saturar)"/>
@@ -389,6 +390,7 @@
 
           <!-- Post poluído: lanchonete -->
           <figure class="feed__post">
+            <span class="etiqueta etiqueta--erro feed__erro" aria-hidden="true">Três fontes</span>
             <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de lanchonete: fundo em degradê neon com bolinhas, foto torta com moldura verde brilhante e três fontes diferentes">
               <rect width="1080" height="1350" fill="url(#g-neon2)"/>
               <rect width="1080" height="1350" fill="url(#p-bolinhas)" opacity=".22"/>
@@ -412,6 +414,7 @@
 
           <!-- Post poluído: açaiteria -->
           <figure class="feed__post">
+            <span class="etiqueta etiqueta--erro feed__erro" aria-hidden="true">Preço escondido</span>
             <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de açaiteria: título cromado em 3D, foto recortada em coração com contorno brilhante e preços escondidos em letra pequena">
               <defs><clipPath id="c-coracao-acai"><path transform="translate(150 300) scale(13)" d="M30 54C10 38 0 28 0 16C0 7 7 0 16 0C22 0 27 3 30 8C33 3 38 0 44 0C53 0 60 7 60 16C60 28 50 38 30 54Z"/></clipPath></defs>
               <rect width="1080" height="1350" fill="url(#g-neon)"/>
@@ -433,6 +436,7 @@
 
           <!-- Post poluído: confeitaria (com o dourado brilhante que a PotencIA evita) -->
           <figure class="feed__post">
+            <span class="etiqueta etiqueta--erro feed__erro" aria-hidden="true">Brilho em tudo</span>
             <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de confeitaria: fundo rosa com corações, moldura dourada brilhante, título em dourado metálico e lista de produtos sem fim">
               <defs><clipPath id="c-oval-doce"><ellipse cx="540" cy="710" rx="368" ry="430"/></clipPath></defs>
               <rect width="1080" height="1350" fill="#ff4fa3"/>
@@ -450,6 +454,7 @@
 
           <!-- Post poluído: padaria (é este que o comparador conserta a seguir) -->
           <figure class="feed__post">
+            <span class="etiqueta etiqueta--erro feed__erro" aria-hidden="true">Horário no canto</span>
             <svg class="post-svg" viewBox="0 0 1080 1350" data-ui role="img" aria-label="Exemplo de post poluído de padaria: degradê neon, foto torta e esticada, selo de urgência e o horário do pão escondido no canto">
               <rect width="1080" height="1350" fill="url(#g-neon)"/>
               <rect width="1080" height="1350" fill="url(#p-listras)" opacity=".16"/>
@@ -632,107 +637,156 @@
          No computador, os painéis abrem conforme a rolagem; no celular,
          empilham e abrem ao entrar na tela. Sem JavaScript, tudo aberto.
          ==================================================================== -->
-    <section class="jornada secao" id="como-funciona" data-chao="papel" aria-labelledby="jornada-titulo">
-      <div class="jornada__intro">
-        <h2 class="titulo-secao" id="jornada-titulo">Da instalação à venda.</h2>
-        <p class="jornada__texto">A jornada inteira, na ordem em que acontece no seu negócio. Cada etapa termina com algo pronto para usar.</p>
-      </div>
+    <section class="jornada secao" id="como-funciona" data-chao="papel" aria-labelledby="jornada-titulo" data-jornada>
+      <div class="jornada__palco" data-jornada-palco>
+        <div class="jornada__trilho" data-jornada-trilho>
+          <!-- O fio: no computador, uma fita sálvia que atravessa as estações e se desenha com a
+               rolagem (o caminho é traçado pelo main.js); no celular, uma linha vertical. -->
+          <svg class="jornada__fio" aria-hidden="true" focusable="false"><path data-fio-fundo/><path data-fio/></svg>
+          <span class="jornada__fio-vertical" aria-hidden="true"><i data-fio-vertical></i></span>
 
-      <ol class="etapas" data-etapas>
-        <li class="etapa is-aberta" style="--tom: #171E19; --tinta: #F6F1E7">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b1" aria-expanded="true" aria-controls="etapa-p1"><span class="etapa__nome">Instalar e configurar</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p1" role="region" aria-labelledby="etapa-b1">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Instalar e configurar</p>
+          <header class="jornada__intro">
+            <h2 class="titulo-secao" id="jornada-titulo">Da instalação à venda.</h2>
+            <p class="jornada__texto">A jornada inteira, na ordem em que acontece no seu negócio. Cada etapa termina com algo pronto para usar.</p>
+            <p class="jornada__dica" aria-hidden="true">Siga o fio <span>→</span></p>
+          </header>
+
+          <ol class="estacoes">
+            <!-- 1. Instalar -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">01</span>
+                <h3 class="estacao__titulo">Instalar e configurar</h3>
                 <p>Você instala o Claude, cria a conta no GitHub e deixa o computador pronto para trabalhar. Um passo por vez, com a tela na sua frente.</p>
               </div>
-              <figure class="etapa__foto"><img src="assets/teclado.webp" width="960" height="720" alt="Teclado de notebook visto de perto" loading="lazy" decoding="async"></figure>
-            </div>
-          </div>
-        </li>
-        <li class="etapa" style="--tom: #24302A; --tinta: #F6F1E7">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b2" aria-expanded="false" aria-controls="etapa-p2"><span class="etapa__nome">Planejar o conteúdo</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p2" role="region" aria-labelledby="etapa-b2">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Planejar o conteúdo</p>
+              <div class="artefato artefato--chat" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· computador pronto</span></span>
+                <div class="artefato__janela">
+                  <div class="artefato__barra"><i></i><i></i><i></i><b>Claude</b></div>
+                  <p class="msg msg--voce" data-anima="msg">Oi! Me ajuda a deixar tudo pronto?</p>
+                  <p class="msg msg--claude" data-anima="msg"><span data-digitar>Claro. Vamos um passo de cada vez: primeiro o GitHub, depois a pasta do projeto.</span></p>
+                  <ul class="checklist">
+                    <li data-anima="check">Claude instalado</li>
+                    <li data-anima="check">Conta no GitHub</li>
+                    <li data-anima="check">Pasta do projeto criada</li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+
+            <!-- 2. Planejar -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">02</span>
+                <h3 class="estacao__titulo">Planejar o conteúdo</h3>
                 <p>Você define para quem fala, o que posta e por quê. O Claude ajuda a transformar o que você vende em roteiros.</p>
               </div>
-              <figure class="etapa__foto"><img src="assets/caderno-visconti.webp" width="960" height="720" alt="Página de caderno de anotações do pintor Eliseu Visconti, de 1918, com desenhos a lápis" loading="lazy" decoding="async"></figure>
-            </div>
-          </div>
-        </li>
-        <li class="etapa" style="--tom: #2F4537; --tinta: #F6F1E7">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b3" aria-expanded="false" aria-controls="etapa-p3"><span class="etapa__nome">Criar</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p3" role="region" aria-labelledby="etapa-b3">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Criar</p>
+              <div class="artefato artefato--calendario" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· um mês planejado</span></span>
+                <div class="artefato__folha">
+                  <p class="calendario__mes">Novembro <span>· Padaria Trigal</span></p>
+                  <div class="calendario__semana"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+                  <div class="calendario__dias">
+                    <span>1</span><span>2</span><span>3</span><span data-dia="reel">4<i>Reel</i></span><span>5</span><span>6</span><span data-dia="carrossel">7<i>Carrossel</i></span>
+                    <span>8</span><span>9</span><span data-dia="post">10<i>Post</i></span><span>11</span><span>12</span><span data-dia="reel">13<i>Reel</i></span><span>14</span>
+                    <span>15</span><span>16</span><span>17</span><span data-dia="carrossel">18<i>Carrossel</i></span><span>19</span><span>20</span><span data-dia="post">21<i>Post</i></span>
+                    <span>22</span><span data-dia="reel">23<i>Reel</i></span><span>24</span><span>25</span><span data-dia="post">26<i>Post</i></span><span>27</span><span>28</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 3. Criar -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">03</span>
+                <h3 class="estacao__titulo">Criar</h3>
                 <p>Vídeo em motion, edição dos seus takes do celular, arte ou carrossel. Você escolhe o formato e produz com método.</p>
               </div>
-              <figure class="etapa__foto etapa__foto--video">
-                <div class="reel">
-                  <video muted loop playsinline preload="none" poster="assets/paneleiras-take-poster.webp" width="540" height="960" aria-hidden="true" data-video>
+              <div class="artefato artefato--reel" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· seu primeiro reel</span></span>
+                <div class="artefato__celular">
+                  <video muted loop playsinline preload="none" poster="assets/paneleiras-take-poster.webp" width="540" height="960" data-video>
                     <source src="assets/paneleiras-take.webm" type="video/webm">
                     <source src="assets/paneleiras-take.mp4" type="video/mp4">
                   </video>
-                  <p class="reel__legenda" aria-hidden="true"><span>Panela de barro capixaba,</span><span>queimada a céu aberto.</span></p>
+                  <p class="peca__legenda"><span>Panela de barro capixaba,</span><span>queimada a céu aberto.</span></p>
                 </div>
-                <figcaption>Take real de celular, com legenda. Associação das Paneleiras de Goiabeiras, Vitória (ES).</figcaption>
-              </figure>
-            </div>
-          </div>
-        </li>
-        <li class="etapa" style="--tom: #3F5A46; --tinta: #F6F1E7">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b4" aria-expanded="false" aria-controls="etapa-p4"><span class="etapa__nome">Dar voz</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p4" role="region" aria-labelledby="etapa-b4">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Dar voz</p>
+                <div class="linha-edicao"><i></i><i></i><i></i><i></i><b data-anima="cabeca"></b></div>
+              </div>
+            </li>
+
+            <!-- 4. Dar voz -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">04</span>
+                <h3 class="estacao__titulo">Dar voz</h3>
                 <p>Você gera uma locução natural com o ElevenLabs, em português, sem estúdio e sem gravar dez vezes.</p>
               </div>
-              <figure class="etapa__foto"><img src="assets/microfone.webp" width="960" height="768" alt="Microfone USB de mesa, prateado" loading="lazy" decoding="async"></figure>
-            </div>
-          </div>
-        </li>
-        <li class="etapa" style="--tom: #6B8F71; --tinta: #171E19">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b5" aria-expanded="false" aria-controls="etapa-p5"><span class="etapa__nome">Publicar</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p5" role="region" aria-labelledby="etapa-b5">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Publicar</p>
+              <div class="artefato artefato--voz" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· locução em português</span></span>
+                <div class="artefato__janela">
+                  <div class="voz__topo"><span class="voz__play"></span><p>Locução <span>· português · 0:15</span></p></div>
+                  <div class="voz__onda" data-onda><i style="--h: 0.22"></i><i style="--h: 0.79"></i><i style="--h: 0.58"></i><i style="--h: 0.41"></i><i style="--h: 0.22"></i><i style="--h: 0.30"></i><i style="--h: 0.64"></i><i style="--h: 0.27"></i><i style="--h: 0.79"></i><i style="--h: 0.74"></i><i style="--h: 0.55"></i><i style="--h: 0.42"></i><i style="--h: 0.47"></i><i style="--h: 0.39"></i><i style="--h: 0.31"></i><i style="--h: 0.62"></i><i style="--h: 0.73"></i><i style="--h: 0.60"></i><i style="--h: 0.57"></i><i style="--h: 0.73"></i><i style="--h: 0.33"></i><i style="--h: 0.33"></i><i style="--h: 0.33"></i><i style="--h: 0.55"></i><i style="--h: 0.55"></i><i style="--h: 0.63"></i><i style="--h: 0.85"></i><i style="--h: 0.56"></i><i style="--h: 0.31"></i><i style="--h: 0.44"></i><i style="--h: 0.27"></i><i style="--h: 0.43"></i><i style="--h: 0.58"></i><i style="--h: 0.78"></i><i style="--h: 0.66"></i><i style="--h: 0.28"></i></div>
+                  <p class="voz__texto">“Pão francês quentinho às 6h, 12h e 17h. Encomende pelo WhatsApp.”</p>
+                </div>
+              </div>
+            </li>
+
+            <!-- 5. Publicar -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">05</span>
+                <h3 class="estacao__titulo">Publicar</h3>
                 <p>Formato certo para cada rede, legenda que funciona e horário escolhido. O post sai do rascunho e vai para o ar.</p>
               </div>
-              <figure class="etapa__foto"><img src="assets/celular.webp" width="960" height="640" alt="Mão segurando um celular com a tela acesa" loading="lazy" decoding="async"></figure>
-            </div>
-          </div>
-        </li>
-        <li class="etapa" style="--tom: #C9D3C4; --tinta: #171E19">
-          <h3 class="etapa__cabeca">
-            <button class="etapa__botao" type="button" id="etapa-b6" aria-expanded="false" aria-controls="etapa-p6"><span class="etapa__nome">Converter e medir</span></button>
-          </h3>
-          <div class="etapa__painel" id="etapa-p6" role="region" aria-labelledby="etapa-b6">
-            <div class="etapa__miolo">
-              <div class="etapa__texto">
-                <p class="etapa__titulo" aria-hidden="true">Converter e medir</p>
+              <div class="artefato artefato--post" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· post no ar</span></span>
+                <div class="artefato__celular artefato__celular--claro">
+                  <div class="post__perfil"><i></i><b>padariatrigal</b></div>
+                  <img src="assets/pao-frances-quadrado.webp" width="1000" height="1000" alt="" loading="lazy" decoding="async">
+                  <div class="post__acoes"><i></i><i></i><i></i></div>
+                  <p class="post__legenda"><b>padariatrigal</b> Pão francês quentinho às 6h, 12h e 17h. Encomende pelo WhatsApp.</p>
+                </div>
+                <p class="post__aviso" data-anima="aviso"><b>Publicado</b> Instagram · agora</p>
+              </div>
+            </li>
+
+            <!-- 6. Converter e medir -->
+            <li class="estacao" data-estacao>
+              <span class="estacao__marca" aria-hidden="true"></span>
+              <div class="estacao__texto">
+                <span class="estacao__numero" aria-hidden="true">06</span>
+                <h3 class="estacao__titulo">Converter e medir</h3>
                 <p>Uma chamada clara, um caminho direto até o WhatsApp e a leitura do que trouxe cliente. O próximo post já nasce melhor.</p>
               </div>
-              <figure class="etapa__foto"><img src="assets/bolos-vitrine.webp" width="1280" height="960" alt="Bolos de chocolate numa vitrine iluminada de padaria" loading="lazy" decoding="async"></figure>
-            </div>
-          </div>
-        </li>
-      </ol>
+              <div class="artefato artefato--venda" aria-hidden="true">
+                <span class="etiqueta artefato__etiqueta">Ao final <span>· cliente no WhatsApp</span></span>
+                <div class="artefato__janela artefato__janela--zap">
+                  <p class="zap zap--cliente" data-anima="zap">Vi o post! Ainda tem pão às 17h?</p>
+                  <p class="zap zap--loja" data-anima="zap">Tem sim. Separo quantos?</p>
+                  <p class="zap zap--cliente" data-anima="zap">Duas dúzias, por favor.</p>
+                </div>
+                <div class="grafico">
+                  <p>Pedidos pelo WhatsApp <span>· exemplo</span></p>
+                  <div class="grafico__barras"><i style="--v: .28"></i><i style="--v: .36"></i><i style="--v: .33"></i><i style="--v: .52"></i><i style="--v: .61"></i><i style="--v: .84"></i></div>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Progresso (só no trilho horizontal) -->
+        <div class="jornada__progresso" aria-hidden="true">
+          <span class="jornada__contador" data-jornada-contador>01 / 06</span>
+          <span class="jornada__barra"><i data-jornada-barra></i></span>
+        </div>
+      </div>
     </section>
 
     <!-- ====================================================================
@@ -741,6 +795,7 @@
          trilha no expoente dourado. Montado a partir de dados.js.
          ==================================================================== -->
     <section class="trilhas secao" id="trilhas" data-chao="preto" aria-labelledby="trilhas-titulo">
+      <div class="fundo-no fundo-no--trilhas" aria-hidden="true" data-fundo-no></div>
       <div class="trilhas__cabeca">
         <h2 class="titulo-secao" id="trilhas-titulo">As trilhas</h2>
         <p class="trilhas__conta">Sete trilhas, do zero à venda</p>
@@ -783,10 +838,12 @@
          ==================================================================== -->
     <section class="sempre secao" id="sempre-atualizada" data-chao="papel" aria-labelledby="sempre-titulo">
       <div class="sempre__painel">
+        <div class="fundo-no fundo-no--sempre" aria-hidden="true" data-fundo-no></div>
         <h2 class="sempre__titulo" id="sempre-titulo" data-acender>A IA muda todo mês. <br>As trilhas também.</h2>
         <figure class="sempre__foto">
-          <div class="recorte-expoente">
+          <div class="sempre__peca" data-inclinar>
             <img src="assets/calendario-quadrado.webp" width="1100" height="1100" alt="Calendário de mesa antigo, de virar as folhas, mostrando o dia 5" loading="lazy" decoding="async">
+            <span class="etiqueta sempre__etiqueta" aria-hidden="true">Trilhas <span>· versão <b data-versao>1.0</b></span></span>
           </div>
         </figure>
         <div class="sempre__blocos">
@@ -875,6 +932,7 @@
          Envio preparado para Formspree (endpoint em dados.js).
          ==================================================================== -->
     <section class="lista secao" id="lista" data-chao="preto" aria-labelledby="lista-titulo">
+      <div class="fundo-no fundo-no--lista" aria-hidden="true" data-fundo-no></div>
       <div class="cupom" data-cupom>
         <div class="cupom__canhoto">
           <h2 class="cupom__titulo" id="lista-titulo">Garanta seu lugar.</h2>
@@ -915,7 +973,7 @@
         </form>
 
         <div class="cupom__sucesso" data-sucesso hidden tabindex="-1">
-          <span class="cupom__sucesso-simbolo" aria-hidden="true"><span></span><span></span></span>
+          <span class="cupom__sucesso-simbolo" aria-hidden="true" data-no-sucesso></span>
           <p class="cupom__sucesso-titulo" data-sucesso-titulo>Pronto. Você está na lista.</p>
           <p>Sua condição de fundador está guardada. Quando a primeira turma abrir, a gente avisa pelo WhatsApp.</p>
           <a class="link link--sublinhado" href="#topo">Voltar ao início</a>
