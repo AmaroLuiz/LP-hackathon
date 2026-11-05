@@ -148,10 +148,10 @@ window.POTENCIA_DADOS = {
      ------------------------------------------------------------------------ */
   equipe: [
     { nome: 'Luiz Amaro', funcao: 'Programação e marketing', foto: '' },
-    { nome: 'Pedro Kliemann', funcao: 'A definir', foto: '' },
-    { nome: 'Gabriel Henrique', funcao: 'A definir', foto: '' },
-    { nome: 'Lucas Andrade', funcao: 'A definir', foto: '' },
-    { nome: 'Samuel Salles', funcao: 'A definir', foto: '' },
-    { nome: 'Ramon Henrique', funcao: 'A definir', foto: '' }
+    { nome: 'Pedro Kliemann', funcao: 'Idealização', foto: '' },
+    { nome: 'Gabriel Henrique', funcao: 'Roteirista e gravador', foto: '' },
+    { nome: 'Lucas Andrade', funcao: 'Coleta de dados', foto: '' },
+    { nome: 'Samuel Salles', funcao: 'Coleta de dados', foto: '' },
+    { nome: 'Ramon Henrique', funcao: 'Idealização e marketing', foto: '' }
   ]
 };

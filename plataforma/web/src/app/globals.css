@@ -1,0 +1,280 @@
+/* ==========================================================================
+   PotencIA · plataforma
+   Mesmo sistema da landing (style.css na raiz do projeto): carvão, creme,
+   sálvia e o dourado do expoente (x²), que marca o número do curso, o botão
+   principal e o item ativo. Cantos retos, Chillax no texto, Libre Baskerville
+   só no nome da marca. Componentes em src/styles/componentes.css.
+   ========================================================================== */
+
+/* 1. Tokens ---------------------------------------------------------------- */
+:root {
+  --preto: #171E19;
+  --grafite: #1F2822;
+  --carvao: #2A342D;
+  --cinza-escuro: #4E5750;
+  --cinza: #858C83;
+  --cinza-claro: #A6ADA2;
+  --pedra: #E7E0D1;
+  --papel: #F6F1E7;
+  --texto: #1A1A1A;
+  --ouro: #F2B705;
+  --ouro-texto: #7A5A00;
+  --salvia: #6B8F71;
+  --salvia-texto: #3F6B47; /* sálvia para texto sobre claro (contraste AA) */
+  --erro: #9A2A1F;
+  --erro-claro: #E8A398;   /* erro legível sobre o escuro */
+
+  /* Papéis: mudam conforme o chão (ver [data-chao]) */
+  --chao: var(--preto);
+  --tinta: var(--papel);
+  --suave: var(--cinza-claro);
+  --superficie: var(--grafite);
+  --linha: color-mix(in srgb, var(--papel) 16%, transparent);
+  --acento-texto: var(--ouro);
+  --sucesso-texto: var(--salvia-clara, #A9BFA9);
+  --erro-texto: var(--erro-claro);
+  --botao-fundo: var(--papel);
+  --botao-tinta: var(--preto);
+  --foco: var(--ouro);
+
+  --fonte-texto: 'Chillax', 'Helvetica Neue', Arial, sans-serif;
+
+  --passo-pequeno: clamp(0.8125rem, 0.78rem + 0.12vw, 0.875rem);
+  --passo-ui: 1rem;
+  --passo-corpo: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --passo-destaque: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --passo-declaracao: clamp(1.3125rem, 0.75rem + 1.9vw, 2.25rem);
+  --passo-titulo: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+
+  --margem: clamp(1.25rem, 2.2vw, 2rem);
+  --largura: 76rem;
+  --secao: clamp(4rem, 9vw, 8rem);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+}
+
+[data-chao="preto"] {
+  color-scheme: dark;
+  --chao: var(--preto); --tinta: var(--papel); --suave: var(--cinza-claro); --superficie: var(--grafite);
+  --linha: color-mix(in srgb, var(--papel) 16%, transparent);
+  --acento-texto: var(--ouro); --sucesso-texto: #A9BFA9; --erro-texto: var(--erro-claro);
+  --botao-fundo: var(--papel); --botao-tinta: var(--preto); --foco: var(--ouro);
+}
+/* Controles nativos (rádio, seleção, rolagem) seguem o chão */
+[data-chao="papel"] {
+  color-scheme: light;
+  --chao: var(--papel); --tinta: var(--texto); --suave: var(--cinza-escuro); --superficie: var(--pedra);
+  --linha: color-mix(in srgb, var(--texto) 16%, transparent);
+  --acento-texto: var(--ouro-texto); --sucesso-texto: var(--salvia-texto); --erro-texto: var(--erro);
+  --botao-fundo: var(--preto); --botao-tinta: var(--papel); --foco: var(--preto);
+}
+
+/* 2. Base ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--preto); color-scheme: dark; }
+body {
+  margin: 0;
+  background: var(--preto);
+  color: var(--papel);
+  font-family: var(--fonte-texto);
+  font-size: var(--passo-corpo);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, p, ol, ul, dl, dd { margin: 0; }
+ol[class], ul[class] { padding: 0; list-style: none; }
+h1, h2, h3 { font-weight: 600; text-wrap: balance; }
+p, li { text-wrap: pretty; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+::selection { background: var(--ouro); color: var(--preto); }
+:focus-visible { outline: 2px solid var(--foco); outline-offset: 3px; }
+[hidden] { display: none !important; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.pular {
+  position: absolute; z-index: 100; left: var(--margem); top: -4rem;
+  padding: .75rem 1rem; background: var(--ouro); color: var(--preto);
+  font-size: var(--passo-ui); font-weight: 600; text-decoration: none;
+  transition: top var(--t-ui) var(--ease-out);
+}
+.pular:focus { top: 1rem; }
+
+.link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.28em;
+  transition: text-decoration-color var(--t-hover) ease;
+}
+.link--sublinhado { text-decoration-color: currentColor; font-weight: 500; }
+@media (hover: hover) and (pointer: fine) {
+  .link:hover { text-decoration-color: currentColor; }
+  .link--sublinhado:hover { text-decoration-color: var(--ouro); }
+}
+
+/* 3. Marca e cabeçalho ----------------------------------------------------- */
+.marca { display: inline-flex; align-items: center; gap: 0.7rem; line-height: 1; text-decoration: none; }
+.marca__simbolo { width: 2.25rem; height: 2.25rem; transition: transform 700ms var(--ease-out); }
+.marca__nome {
+  font-family: var(--fonte-marca), Georgia, serif; font-weight: 700;
+  font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem); letter-spacing: 0.03em;
+}
+@media (hover: hover) and (pointer: fine) {
+  /* O nó tem simetria de 90°: um quarto de volta e ele volta ao mesmo desenho */
+  .marca:hover .marca__simbolo { transform: rotate(90deg); }
+}
+
+/* Pílula de vidro da landing: translúcida, com desfoque do que passa por trás,
+   borda fina e brilho no alto. Sem suporte a desfoque, fica sólida. */
+.cabecalho {
+  position: sticky; top: 0; z-index: 50;
+  padding: 0.75rem max(0.75rem, calc((100% - var(--largura)) / 2 - 1rem));
+}
+.cabecalho__pilula {
+  display: flex; align-items: center; gap: 1.75rem;
+  height: 3.75rem; padding: 0 0.5rem 0 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--papel) 14%, transparent);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--preto) 74%, transparent);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 55%, rgba(255, 255, 255, 0));
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0.75rem 2rem -0.9rem rgba(0, 0, 0, 0.45);
+  color: var(--papel);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cabecalho__pilula { background-color: var(--preto); }
+}
+.cabecalho__nav { display: none; gap: 1.5rem; font-size: var(--passo-ui); font-weight: 500; }
+.cabecalho__nav a, .cabecalho__entrar {
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.28em;
+  transition: text-decoration-color var(--t-hover) ease;
+}
+.cabecalho__nav a:hover, .cabecalho__entrar:hover { text-decoration-color: var(--ouro); }
+.cabecalho__direita { display: flex; align-items: center; gap: 0.35rem; margin-left: auto; }
+.cabecalho__conta { display: none; align-items: center; gap: 1rem; min-width: 2.75rem; min-height: 2.75rem; font-size: var(--passo-ui); font-weight: 500; }
+/* Na pílula, o botão também é pílula (sem o quadradinho do expoente) */
+.cabecalho__criar { --botao-fundo: var(--papel); --botao-tinta: var(--preto); border-radius: 999px; }
+.cabecalho__criar:hover { background: var(--ouro); color: var(--preto); }
+.cabecalho__menu {
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  border: 0; border-radius: 999px; background: none; color: inherit;
+}
+.cabecalho__menu:hover { background: color-mix(in srgb, var(--papel) 10%, transparent); }
+@media (min-width: 48em) {
+  .cabecalho__nav, .cabecalho__conta { display: flex; }
+  .cabecalho__menu { display: none; }
+}
+
+/* Busca do cabeçalho: ícone que abre o campo */
+.busca-cabecalho { display: none; align-items: center; }
+@media (min-width: 48em) { .busca-cabecalho { display: flex; } }
+.busca-cabecalho__campo {
+  width: 0; min-height: 2.5rem; padding: 0; border: 0; border-radius: 999px;
+  background: color-mix(in srgb, var(--papel) 10%, transparent); color: var(--papel);
+  font-size: var(--passo-ui); opacity: 0;
+  transition: width var(--t-ui) var(--ease-out), padding var(--t-ui) var(--ease-out), opacity var(--t-hover) ease;
+}
+.busca-cabecalho__campo::placeholder { color: var(--cinza-claro); }
+.busca-cabecalho.is-aberta .busca-cabecalho__campo { width: min(16rem, 30vw); padding: 0 1rem; opacity: 1; }
+.busca-cabecalho__campo:focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; }
+.busca-cabecalho__botao {
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  border: 0; border-radius: 999px; background: none; color: inherit;
+}
+.busca-cabecalho__botao:hover { background: color-mix(in srgb, var(--papel) 10%, transparent); }
+
+/* Menu do celular em tela cheia (a pílula fica por cima, com o botão de fechar) */
+.menu-celular {
+  position: fixed; inset: 0; z-index: 45; overflow-y: auto;
+  display: grid; align-content: start; gap: 2rem;
+  padding: 6rem var(--margem) 3rem;
+  background: var(--preto); color: var(--papel);
+}
+.menu-celular[hidden] { display: none; }
+.menu-celular__busca { display: flex; gap: 0.5rem; }
+.menu-celular__busca .botao { min-height: 3.25rem; padding: 0 1rem; }
+.menu-celular__lista { display: grid; border-top: 1px solid var(--linha); }
+.menu-celular__lista a {
+  display: flex; align-items: center; min-height: 3.5rem; border-bottom: 1px solid var(--linha);
+  font-size: var(--passo-destaque); font-weight: 600; text-decoration: none;
+}
+.menu-celular__lista--conta a { font-size: var(--passo-corpo); font-weight: 500; }
+.menu-celular__acoes { display: grid; gap: 1rem; }
+.menu-celular__conta { display: grid; gap: 1rem; }
+.menu-celular__nome { color: var(--suave); font-size: var(--passo-pequeno); }
+.menu-celular__sair { justify-self: start; min-height: 2.75rem; padding: 0; border: 0; background: none; color: var(--erro-claro); font-weight: 600; text-decoration: underline; text-underline-offset: 0.28em; }
+
+/* 4. Seções e títulos ------------------------------------------------------ */
+/* O conteúdo ocupa no máximo --largura, alinhado à esquerda dessa coluna */
+.secao {
+  background: var(--chao); color: var(--tinta);
+  padding: var(--secao) max(var(--margem), calc((100% - var(--largura)) / 2));
+}
+.topo { margin-bottom: clamp(3rem, 6vw, 5rem); }
+.topo--compacto { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.olho { color: var(--suave); font-size: var(--passo-pequeno); font-weight: 500; letter-spacing: 0.02em; }
+.titulo { margin-top: 0.75rem; font-size: var(--passo-titulo); line-height: 1.02; letter-spacing: -0.03em; }
+.topo__apoio { margin-top: 1.25rem; max-width: 44ch; color: var(--suave); font-size: var(--passo-destaque); line-height: 1.4; }
+.subtitulo { font-size: var(--passo-destaque); line-height: 1.2; letter-spacing: -0.01em; }
+.rotulo { color: var(--suave); font-size: var(--passo-pequeno); font-weight: 500; letter-spacing: 0.02em; }
+.acoes { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; margin-top: 2rem; align-items: center; }
+.nota-fase { margin-top: 2.5rem; max-width: 60ch; color: var(--suave); font-size: var(--passo-pequeno); }
+
+/* O número vira o expoente do próprio título (quadrado com o dobro da altura do número) */
+.expoente-titulo {
+  display: inline-grid; place-items: center; vertical-align: top;
+  width: 2em; height: 2em; margin-left: 0.4em; margin-top: 0.15em;
+  background: var(--ouro); color: var(--preto);
+  font-size: 0.26em; font-weight: 600; line-height: 1; letter-spacing: 0; font-variant-numeric: tabular-nums;
+}
+
+/* 5. Planos (sobem em degraus, como na landing) --------------------------- */
+.planos { display: grid; gap: 1rem; align-items: end; }
+.plano {
+  position: relative;
+  display: flex; flex-direction: column; gap: 1.25rem;
+  padding: 1.75rem; background: var(--superficie); color: var(--tinta);
+}
+.plano:last-child { background: var(--preto); color: var(--papel); }
+.plano:last-child::after {
+  content: ''; position: absolute; top: -0.9rem; right: -0.9rem;
+  width: 0.9rem; height: 0.9rem; background: var(--ouro);
+}
+.plano__nome { font-size: var(--passo-destaque); }
+.plano__preco { font-size: var(--passo-titulo); font-weight: 600; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.plano__mes { margin-left: 0.25rem; font-size: var(--passo-ui); font-weight: 400; letter-spacing: 0; opacity: 0.7; }
+.plano__itens { display: grid; gap: 0.5rem; }
+.plano__itens li { padding-left: 1.1rem; position: relative; }
+.plano__itens li::before { content: ''; position: absolute; left: 0; top: 0.6em; width: 0.4rem; height: 0.4rem; background: var(--salvia); }
+.planos__nota { margin-top: 2rem; color: var(--suave); font-size: var(--passo-pequeno); }
+@media (min-width: 56.25em) {
+  .planos { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .plano { min-height: calc(22rem + var(--degrau) * 3rem); }
+}
+
+/* 6. Rodapé ---------------------------------------------------------------- */
+.rodape {
+  max-width: var(--largura); margin: 0 auto; padding: 3rem var(--margem);
+  color: var(--cinza-claro); font-size: var(--passo-pequeno);
+}
+.rodape__links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 0.75rem; }
+.rodape__creditos { margin-top: 1rem; }
+.rodape__creditos summary { cursor: pointer; width: fit-content; min-height: 2.75rem; display: flex; align-items: center; }
+.rodape__creditos ul { margin-top: 0.5rem; display: grid; gap: 0.35rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

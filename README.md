@@ -2,6 +2,8 @@
 
 Página única, estática (HTML, CSS e JavaScript), pronta para publicar em qualquer hospedagem de arquivos.
 
+A plataforma dos cursos (API Spring + site Next.js) fica em `plataforma/`, com o próprio [README](plataforma/README.md).
+
 ## Arquivos
 
 | Arquivo | O que tem |
@@ -41,7 +43,7 @@ e acesse http://localhost:5173.
 
 ## Publicar
 
-Netlify (arraste a pasta em app.netlify.com/drop), Vercel, GitHub Pages ou qualquer hospedagem estática. As pastas `.taste-skill/` e `.claude/` são de trabalho e podem ficar de fora.
+Netlify (arraste a pasta em app.netlify.com/drop), Vercel, GitHub Pages ou qualquer hospedagem estática. As pastas `.taste-skill/` e `.claude/` são de trabalho e podem ficar de fora, assim como `plataforma/`, que é publicada à parte.
 
 ## Imagens
 
