@@ -197,7 +197,7 @@ Quando os módulos começarem a trocar eventos (por exemplo, "assinatura ativada
 
 O cookie de sessão sai com `Secure` no perfil prod. A API deve ficar acessível só pelo Next (rede interna ou firewall): o IP do cliente vem do `X-Forwarded-For` enviado pelo proxy.
 
-**Site** (Vercel): `API_URL`, `SITE_URL` e `REVALIDAR_SEGREDO`. A API precisa estar no ar durante o build, porque as páginas dos cursos são geradas a partir dela.
+**Site** (Vercel): `API_URL`, `SITE_URL`, `REVALIDAR_SEGREDO` e `NEXT_PUBLIC_LANDING_URL` (endereço da landing; os links "Sobre", "Sobre a PotencIA" e "Lista de espera" levam para lá, e por ser `NEXT_PUBLIC_` o valor entra no build). Na landing, o caminho inverso fica em `dados.js` → `config.plataforma`. A API precisa estar no ar durante o build, porque as páginas dos cursos são geradas a partir dela.
 
 O limite de tentativas de login e o de perguntas e avaliações ficam na memória da API: com mais de uma instância, troque por Redis.
 

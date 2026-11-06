@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type Re
 import { createPortal } from "react-dom";
 import { AoNavegar } from "@/components/AoNavegar";
 import { Icone } from "@/components/ui/Icone";
+import { naLanding } from "@/lib/landing";
 
 /**
  * Menu do celular em tela cheia: navegação, busca e a área da conta (que vem
@@ -86,6 +87,9 @@ export function MenuCelular({ conta }: { conta: ReactNode }) {
             </li>
             <li>
               <Link href="/planos">Planos</Link>
+            </li>
+            <li>
+              <a href={naLanding()}>Sobre a PotencIA</a>
             </li>
           </ul>
         </nav>

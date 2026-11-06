@@ -20,6 +20,12 @@ window.POTENCIA_DADOS = {
     // Vazio = modo demonstração (o formulário mostra o sucesso, mas não envia nada).
     formEndpoint: '',
 
+    // Endereço da plataforma de cursos (plataforma/web), sem barra no final.
+    // Os links "Entrar", "Ver os cursos", o nome de cada trilha e a coluna
+    // "Plataforma" do rodapé apontam para cá. Troque pelo domínio publicado,
+    // por exemplo 'https://app.potencia.com.br'. Vazio = esses links somem.
+    plataforma: 'http://localhost:3000',
+
     // Redes sociais do rodapé. Troque '#' pelo endereço do perfil.
     redes: [
       { nome: 'Instagram', url: '#' },
@@ -48,10 +54,12 @@ window.POTENCIA_DADOS = {
      Trilhas
      numero: aparece como expoente na foto e no nome ("Trilha 0").
      foto: miniatura quadrada em assets/mini/ (160 × 160 px).
+     slug: endereço do curso na plataforma (/cursos/<slug>). Vazio = sem link.
      ------------------------------------------------------------------------ */
   trilhas: [
     {
       numero: 0,
+      slug: 'primeiros-passos',
       nome: 'Primeiros passos',
       ferramentas: 'Claude e GitHub',
       aprende: 'Instalar o Claude e criar sua conta no GitHub, sem medo de tecnologia. Cada passo mostrado na tela, sem termo técnico.',
@@ -60,6 +68,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 1,
+      slug: 'estrategia-de-conteudo',
       nome: 'Estratégia de conteúdo',
       ferramentas: 'Claude',
       aprende: 'O que postar, para quem e com qual objetivo. Roteiros escritos com o Claude a partir do que o seu negócio vende.',
@@ -68,6 +77,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 2,
+      slug: 'videos-em-motion',
       nome: 'Vídeos em motion',
       ferramentas: 'Remotion e Claude',
       aprende: 'Animações profissionais com Remotion e Claude: textos que entram no ritmo, preços que aparecem, sua marca em movimento.',
@@ -76,6 +86,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 3,
+      slug: 'edicao-de-takes-reais',
       nome: 'Edição de takes reais',
       ferramentas: 'Remotion e Claude',
       aprende: 'Gravações do celular viram vídeos de qualidade: cortes no tempo certo, legendas legíveis e bom enquadramento.',
@@ -84,6 +95,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 4,
+      slug: 'voz-e-narracao',
       nome: 'Voz e narração',
       ferramentas: 'ElevenLabs',
       aprende: 'Locuções naturais com o ElevenLabs para narrar seus vídeos, sem estúdio e sem gravar dez vezes.',
@@ -92,6 +104,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 5,
+      slug: 'artes-e-carrosseis',
       nome: 'Artes e carrosséis que vendem',
       ferramentas: 'Claude',
       aprende: 'Design limpo, hierarquia e identidade. Como montar um carrossel que se entende em três segundos.',
@@ -100,6 +113,7 @@ window.POTENCIA_DADOS = {
     },
     {
       numero: 6,
+      slug: 'da-postagem-a-venda',
       nome: 'Da postagem à venda',
       ferramentas: 'Todas as ferramentas',
       aprende: 'Chamadas para ação, publicação e leitura de resultados. O caminho do post até a conversa no WhatsApp.',
@@ -150,8 +164,6 @@ window.POTENCIA_DADOS = {
     { nome: 'Luiz Amaro', funcao: 'Programação e marketing', foto: '' },
     { nome: 'Pedro Kliemann', funcao: 'Idealização', foto: '' },
     { nome: 'Gabriel Henrique', funcao: 'Roteirista e gravador', foto: '' },
-    { nome: 'Lucas Andrade', funcao: 'Coleta de dados', foto: '' },
-    { nome: 'Samuel Salles', funcao: 'Coleta de dados', foto: '' },
     { nome: 'Ramon Henrique', funcao: 'Idealização e marketing', foto: '' }
   ]
 };

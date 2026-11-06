@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { naLanding } from "@/lib/landing";
 
 // As capas dos cursos vêm de fotos do Wikimedia Commons; mantenha os créditos
 // enquanto elas estiverem no site (origem completa em assets/credits.json, na landing).
@@ -17,6 +18,12 @@ export function Rodape() {
     <footer className="rodape">
       <p>PotencIA · vídeos, artes e carrosséis com IA para o seu negócio.</p>
       <nav className="rodape__links" aria-label="Institucional">
+        <a href={naLanding()} className="link">
+          Sobre a PotencIA
+        </a>
+        <a href={naLanding("#lista")} className="link">
+          Lista de espera
+        </a>
         <Link href="/planos" className="link">
           Planos
         </Link>

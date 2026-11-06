@@ -259,6 +259,7 @@ p, li, figcaption { text-wrap: pretty; }
 .cabecalho .botao::after { display: none; }
 .cabecalho__nav { display: none; }
 .cabecalho__acao { display: none; }
+.cabecalho__entrar { display: none; }
 .cabecalho__menu {
   margin-left: auto; min-height: 2.75rem; padding: 0 0.75rem;
   font-size: var(--passo-ui); font-weight: 500;
@@ -282,6 +283,7 @@ p, li, figcaption { text-wrap: pretty; }
   text-decoration: none;
 }
 .menu-movel .botao { align-self: flex-start; margin-top: 2rem; }
+.menu-movel__entrar { align-self: flex-start; margin-top: 1.25rem; padding: 0.5rem 0; color: var(--cinza-claro); }
 .menu-movel:not([hidden]) { animation: menu-entra 360ms var(--ease-out); }
 @keyframes menu-entra { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
 
@@ -295,6 +297,14 @@ p, li, figcaption { text-wrap: pretty; }
     transition: background-color var(--t-hover) ease;
   }
   .cabecalho__nav a:hover { background-color: color-mix(in srgb, var(--cab-tinta, var(--papel)) 11%, transparent); }
+  /* "Entrar" na plataforma: mesmo desenho dos links, encostado no botão */
+  .cabecalho__entrar {
+    display: inline-flex; align-items: center; margin-right: -1.5rem;
+    padding: 0.45rem 0.85rem; border-radius: 999px;
+    font-size: var(--passo-ui); font-weight: 500; text-decoration: none;
+    transition: background-color var(--t-hover) ease;
+  }
+  .cabecalho__entrar:hover { background-color: color-mix(in srgb, var(--cab-tinta, var(--papel)) 11%, transparent); }
   .cabecalho__acao { display: inline-flex; }
   .cabecalho__menu { display: none; }
 }
@@ -750,6 +760,14 @@ html:not(.js) .abas { display: none; }
 .prato__nome { font-size: var(--passo-destaque); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
 .prato__trilha { color: var(--suave); font-weight: 500; margin-right: 0.45rem; }
 .prato__ferramentas { color: var(--suave); font-size: var(--passo-pequeno); }
+/* O nome da trilha leva à página do curso na plataforma */
+.prato__link {
+  text-decoration: underline; text-decoration-color: transparent;
+  text-decoration-thickness: 0.06em; text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--t-hover) ease;
+}
+.prato__link:hover, .prato__link:focus-visible { text-decoration-color: var(--ouro); }
+.trilhas__plataforma { margin-top: 3.5rem; font-size: var(--passo-destaque); }
 .prato__desc { margin-top: 0.4rem; max-width: 46ch; color: var(--suave); }
 .prato__resultado { margin-top: 0.6rem; max-width: 46ch; color: var(--acento-texto); }
 

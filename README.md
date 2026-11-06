@@ -30,13 +30,14 @@ A plataforma dos cursos (API Spring + site Next.js) fica em `plataforma/`, com o
 4. **Planos:** preços e itens em `dados.js`, marcados como VALORES PROVISÓRIOS. A condição de fundador (desconto, meses, trava de preço) fica em `fundador`.
 5. **Redes sociais e e-mail:** em `dados.js` (`redes` e `email`).
 6. **Compartilhamento (WhatsApp, LinkedIn):** depois de publicar, troque no `<head>` do `index.html` o caminho de `og:image` e `twitter:image` pelo endereço completo, por exemplo `https://seudominio.com.br/assets/og-image.jpg`.
+7. **Ligação com a plataforma:** em `dados.js`, troque `plataforma: 'http://localhost:3000'` pelo endereço publicado da plataforma (sem barra no final). Dele saem o "Entrar" do cabeçalho e do menu do celular, o nome de cada trilha (leva a `/cursos/<slug>`), o "Ver os cursos na plataforma" e a coluna "Plataforma" do rodapé. O `index.html` traz `http://localhost:3000` como reserva para quem estiver sem JavaScript; troque também lá (buscar e substituir). Do outro lado, a plataforma aponta para cá pela variável `NEXT_PUBLIC_LANDING_URL` (veja o [README da plataforma](plataforma/README.md)).
 
 ## Ver no computador
 
-Abra `index.html` direto no navegador, ou sirva a pasta:
+Abra `index.html` direto no navegador, ou sirva a pasta na porta 5173 (a que a plataforma espera no local):
 
 ```bash
-node .claude/servidor.mjs
+npx serve -l 5173
 ```
 
 e acesse http://localhost:5173.

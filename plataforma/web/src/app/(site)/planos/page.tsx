@@ -6,6 +6,7 @@ import { CampoCupom } from "@/components/cursos/CampoCupom";
 import { Acordeao, Aviso } from "@/components/ui/Exibicao";
 import { condicaoFundador, listarCursos, listarPlanos, type CursoCard, type Plano } from "@/lib/api";
 import { plural, preco } from "@/lib/formato";
+import { naLanding } from "@/lib/landing";
 
 export const metadata: Metadata = {
   title: "Planos",
@@ -106,7 +107,7 @@ export default async function Planos(props: PageProps<"/planos">) {
           <div className="fundador">
             <p className="fundador__titulo">Condição de fundador</p>
             <p>
-              Quem está na lista de espera paga {fundador.descontoPercentual}% a menos nas {fundador.mesesDesconto} primeiras cobranças e mantém
+              Quem está na <a href={naLanding("#lista")} className="link link--sublinhado">lista de espera</a> paga {fundador.descontoPercentual}% a menos nas {fundador.mesesDesconto} primeiras cobranças e mantém
               o preço de lançamento por {fundador.mesesPrecoTravado} meses. Assine com o mesmo e-mail da lista: o desconto entra sozinho.
             </p>
           </div>

@@ -5,6 +5,7 @@ import { MenuCelular } from "@/components/MenuCelular";
 import { AvisoVerificacao } from "@/components/conta/AvisoVerificacao";
 import { BotaoSair } from "@/components/conta/BotaoSair";
 import { MenuUsuario } from "@/components/conta/MenuUsuario";
+import { naLanding } from "@/lib/landing";
 import { obterUsuarioSeDisponivel as obterUsuario } from "@/lib/sessao";
 
 export function Marca() {
@@ -103,6 +104,7 @@ export function Cabecalho() {
           <nav className="cabecalho__nav" aria-label="Principal">
             <Link href="/cursos">Cursos</Link>
             <Link href="/planos">Planos</Link>
+            <a href={naLanding()}>Sobre</a>
           </nav>
           <div className="cabecalho__direita">
             <BuscaCabecalho />

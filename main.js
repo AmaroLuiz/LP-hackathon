@@ -37,6 +37,10 @@
   const fracaoDesconto = (d) => (d === 0.5 ? 'metade do valor' : `${Math.round(d * 100)}% a menos`);
   const prazoTrava = (m) => (m === 12 ? 'um ano' : `${m} meses`);
 
+  // Endereço da plataforma de cursos (config.plataforma), sem barra no final.
+  const PLATAFORMA = String(CONFIG.plataforma || '').trim().replace(/\/+$/, '');
+  const naPlataforma = (caminho) => PLATAFORMA + caminho;
+
   // Rola até um alvo (elemento ou posição), com Lenis quando houver.
   function rolarPara(alvo, opcoes = {}) {
     if (lenis) { lenis.scrollTo(alvo, { duration: 1.3, ...opcoes }); return; }
@@ -65,7 +69,9 @@
         </div>
         <div class="prato__texto">
           <div class="prato__linha">
-            <h3 class="prato__nome"><span class="prato__trilha">Trilha ${escapar(t.numero)}</span>${escapar(t.nome)}</h3>
+            <h3 class="prato__nome"><span class="prato__trilha">Trilha ${escapar(t.numero)}</span>${PLATAFORMA && t.slug
+              ? `<a class="prato__link" href="${escapar(naPlataforma('/cursos/' + encodeURIComponent(t.slug)))}">${escapar(t.nome)}</a>`
+              : escapar(t.nome)}</h3>
             <p class="prato__ferramentas">${escapar(t.ferramentas)}</p>
           </div>
           <p class="prato__desc">${escapar(t.aprende)}</p>
@@ -149,6 +155,17 @@
       if (CONFIG.email) email.innerHTML = `<a class="link link--sublinhado" href="mailto:${escapar(CONFIG.email)}">${escapar(CONFIG.email)}</a>`;
       else email.remove();
     }
+  }
+
+  // Links para a plataforma: o HTML traz o endereço local como reserva (sem
+  // JavaScript); aqui ele passa a ser o de config.plataforma. Sem endereço
+  // configurado, os links (e a coluna do rodapé) saem da página.
+  function ligarPlataforma() {
+    if (!PLATAFORMA) {
+      $$('[data-plataforma-bloco], .trilhas__plataforma, [data-plataforma]').forEach((el) => el.remove());
+      return;
+    }
+    $$('[data-plataforma]').forEach((el) => { el.href = naPlataforma(el.dataset.plataforma); });
   }
 
   function montarSegmentos() {
@@ -1281,6 +1298,7 @@
     montarCondicao();
     montarEquipe();
     montarRodape();
+    ligarPlataforma();
     montarSegmentos();
 
     // 2. Bibliotecas
